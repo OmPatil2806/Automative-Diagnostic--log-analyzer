@@ -24,3 +24,11 @@ data/synthetic/*
 .DS_Store
 .vscode/
 .idea/
+
+# Generated outputs
+data/processed/*
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+reports/*
+!reports/.gitkeep

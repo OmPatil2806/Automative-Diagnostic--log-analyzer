@@ -38,13 +38,30 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 
 ```
 ├── data/
-│   ├── raw/          # downloaded datasets (not committed)
-│   ├── synthetic/    # generated fault logs (not committed)
-│   └── reference/    # DTC lookup table
-├── src/analyzer/     # parsing, decoding, anomaly detection
-├── dashboard/        # Streamlit app
-├── scripts/          # data download and generation scripts
-├── notebooks/        # exploration
+│   ├── raw/                # downloaded VED logs (not committed)
+│   ├── synthetic/          # generated fault logs (not committed)
+│   ├── processed/          # cleaned data (not committed)
+│   └── reference/
+│       └── dtc_codes.json  # DTC lookup table
+├── src/analyzer/
+│   ├── config.py           # paths and settings
+│   ├── pipeline.py         # end-to-end pipeline
+│   ├── ingestion/          # loader.py, cleaner.py
+│   ├── dtc/                # decoder.py
+│   ├── synthetic/          # faults.py, generator.py
+│   ├── features/           # engineering.py
+│   ├── detection/          # anomaly.py
+│   ├── analysis/           # correlation.py, health_score.py
+│   └── reporting/          # report.py
+├── scripts/                # download_ved, generate_synthetic, train_model, run_pipeline
+├── dashboard/
+│   ├── app.py
+│   ├── pages/              # Overview, Signal Explorer, Fault Analysis, Vehicle Health
+│   └── components/         # charts.py
+├── models/                 # trained models (not committed)
+├── reports/                # generated reports (not committed)
+├── notebooks/              # exploration
+├── docs/architecture.md    # how the modules fit together
 └── tests/
 ```
 

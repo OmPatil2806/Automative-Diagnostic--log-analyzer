@@ -1,0 +1,1 @@
+"""Synthetic fault log generation."""
