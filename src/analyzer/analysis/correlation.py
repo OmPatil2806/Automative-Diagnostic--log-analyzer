@@ -216,6 +216,9 @@ def link_dtcs(episodes: pd.DataFrame, dtc_events: pd.DataFrame, table: dict | No
 
     Returns one row per DTC with the linked episode (or NaN) and the early
     warning time in seconds (positive = anomaly seen before the DTC).
+    If `dtc_events` has a `time_known` column that is False (codes read with a
+    scan tool after the drive, set to the end of the trip), the DTC is still
+    linked but no warning time is reported.
     """
     table = load_dtc_table() if table is None else table
     rows = []
@@ -227,13 +230,17 @@ def link_dtcs(episodes: pd.DataFrame, dtc_events: pd.DataFrame, table: dict | No
             & (trip["start_ms"] <= event.time_ms + DTC_LINK_TOLERANCE_MS)
         ].sort_values("start_ms")
         linked = match.iloc[0] if len(match) else None
+        time_known = bool(getattr(event, "time_known", True))
         rows.append({
             "vehicle_id": event.vehicle_id,
             "trip_id": event.trip_id,
             "code": event.code,
             "dtc_time_ms": event.time_ms,
             "episode": linked["episode"] if linked is not None else np.nan,
-            "warning_before_dtc_s": (event.time_ms - linked["start_ms"]) / 1000 if linked is not None else np.nan,
+            "warning_before_dtc_s": (
+                (event.time_ms - linked["start_ms"]) / 1000 if linked is not None and time_known else np.nan
+            ),
+            "time_known": time_known,
         })
-    columns = TRIP_KEYS + ["code", "dtc_time_ms", "episode", "warning_before_dtc_s"]
+    columns = TRIP_KEYS + ["code", "dtc_time_ms", "episode", "warning_before_dtc_s", "time_known"]
     return pd.DataFrame(rows, columns=columns)

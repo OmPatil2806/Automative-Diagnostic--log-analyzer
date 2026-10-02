@@ -41,6 +41,7 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 │   ├── raw/                # downloaded VED logs (not committed)
 │   ├── synthetic/          # generated fault logs (not committed)
 │   ├── processed/          # cleaned data (not committed)
+│   ├── samples/            # example input trips
 │   └── reference/
 │       └── dtc_codes.json  # DTC lookup table
 ├── src/analyzer/
@@ -52,13 +53,14 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 │   ├── features/           # engineering.py
 │   ├── detection/          # anomaly.py
 │   ├── analysis/           # correlation.py, health_score.py
-│   └── reporting/          # report.py
-├── scripts/                # download_ved, prepare_ved, generate_synthetic, train_model, run_pipeline
+│   └── reporting/          # report.py, charts.py
+├── scripts/                # download_ved, prepare_ved, generate_synthetic, train_model,
+│                           # evaluate_analysis, make_samples, run_pipeline
 ├── dashboard/
 │   ├── app.py
 │   ├── pages/              # Overview, Signal Explorer, Fault Analysis, Vehicle Health
 │   └── components/         # charts.py
-├── models/                 # trained models (not committed)
+├── models/                 # trained anomaly detector (demo model included)
 ├── reports/                # generated reports (not committed)
 ├── notebooks/              # exploration
 ├── docs/architecture.md    # how the modules fit together
@@ -73,10 +75,72 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 - [x] **Step 3:** synthetic fault generator
 - [x] **Step 4:** ML anomaly detection
 - [x] **Step 5:** fault correlation, root cause and vehicle health score
-- [ ] **Step 6:** diagnosis report
+- [x] **Step 6:** diagnosis report and end-to-end pipeline
 - [ ] **Step 7:** dashboard
 
-## Getting started
+## Quick start: diagnose a trip
+
+A trained model and sample trips are included, so this works right after installing:
+
+```bash
+pip install -r requirements.txt
+python scripts/run_pipeline.py --log data/samples/vacuum_leak.csv --dtc-file data/samples/vacuum_leak_dtc.csv
+```
+
+```
+════════════════════════════════════════════════════════════════
+ VEHICLE DIAGNOSIS REPORT
+ Vehicle 347   Trip 1891   2017-11-04 16:28
+ 11:15 min drive, 6.8 km, 824 readings
+════════════════════════════════════════════════════════════════
+ HEALTH SCORE:  75 / 100   ⚠ NEEDS ATTENTION
+
+ Fault code(s) P0171 set. Likely cause: Vacuum leak. The problem
+   showed in the signals 17 s before the code was set.
+
+ FAULT CODES
+  P0171  System Too Lean (Bank 1)
+         MEDIUM · set at 7:58
+
+ ANOMALIES DETECTED
+  1. Fuel system (fuel trims)   7:41–11:15   linked to P0171
+     detected 17 s BEFORE the fault code
+     Likely cause: Vacuum leak (high confidence)
+       - Fuel trims +23.1% above normal: the ECU is adding fuel (lean)
+       - Airflow reading -7% vs earlier in this trip: close to
+         normal, so extra air is entering after the MAF
+
+ RECOMMENDED CHECKS
+  1. Inspect intake hoses and vacuum lines
+  2. Check the intake manifold gasket
+  3. Smoke-test the intake for leaks
+```
+
+It also writes `reports/vacuum_leak_report.json` and `reports/vacuum_leak_report.html` (with signal charts; add `--offline` to embed the chart library for viewing without internet).
+
+### Input
+
+A CSV driving log, one row per reading (about 1 per second):
+
+| Column | Required | Used for |
+|---|---|---|
+| `time_ms`, `speed_kmh`, `engine_rpm` | yes | timing, speed sensor and engine checks |
+| `stft_b1_pct`, `ltft_b1_pct` | no | fuel system |
+| `maf_gs`, `absolute_load_pct` | no | air intake / MAF |
+| `hv_battery_voltage_v`, `hv_battery_current_a`, `hv_battery_soc_pct` | no | hybrid / EV battery |
+| `vehicle_id` | no | use this VED vehicle's learned baseline |
+
+Missing signals are fine: those checks are skipped and the report says so. Raw VED column names also work. A real car's data can be recorded with an ELM327 OBD-II adapter and `python-OBD`.
+
+Fault codes are optional, in any of these forms:
+
+```bash
+--dtc P0171 P0420                     # codes read with a scan tool (time unknown)
+--obd-response "43 01 71 04 20"       # raw OBD-II mode 03 response
+--dtc-file codes.csv                  # columns code,time_ms (enables early-warning time)
+```
+
+## Full pipeline (retrain from scratch)
 
 ```bash
 git clone https://github.com/OmPatil2806/Automative-Diagnostic--log-analyzer.git
@@ -98,6 +162,9 @@ python scripts/train_model.py
 
 # 5. Diagnose trips: root cause + health score -> reports/
 python scripts/evaluate_analysis.py
+
+# 6. Rebuild the sample files
+python scripts/make_samples.py
 
 # Run tests
 pytest
@@ -157,6 +224,11 @@ Airflow is compared with the vehicle's baseline, or with earlier in the same tri
 | Faulty trips flagged | 100% (mean score 69) |
 
 Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; the root cause result is the more meaningful one.
+
+## Notes on the included model
+
+`models/anomaly_detector.joblib` was trained on the first VED week with scikit-learn 1.9. If your
+scikit-learn version cannot load it, retrain with the full pipeline above.
 
 ## Tech stack
 

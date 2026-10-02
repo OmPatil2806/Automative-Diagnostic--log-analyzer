@@ -130,7 +130,7 @@ class AnomalyDetector:
 
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
-        joblib.dump(self, path)
+        joblib.dump(self, path, compress=3)
 
     @staticmethod
     def load(path: Path) -> "AnomalyDetector":

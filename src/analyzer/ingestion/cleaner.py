@@ -65,3 +65,14 @@ def summarize(df: pd.DataFrame) -> dict:
         "start": df["timestamp"].min(),
         "end": df["timestamp"].max(),
     }
+
+
+def clean_trip_log(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean a user-supplied log (same steps as clean_ved, without VED's DayNum timestamps)."""
+    df = df.dropna(subset=KEY_COLUMNS)
+    df = df.astype({"vehicle_id": "int32", "trip_id": "int32", "time_ms": "int64"})
+    df = df.drop_duplicates(subset=KEY_COLUMNS, keep="first")
+    df = df.sort_values(KEY_COLUMNS)
+    df, _ = remove_invalid_values(df)
+    df = df.dropna(subset=["speed_kmh", "engine_rpm"], how="all")
+    return df.reset_index(drop=True)

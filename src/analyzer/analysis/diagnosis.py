@@ -73,6 +73,7 @@ def diagnose(scored: pd.DataFrame, dtc_events: pd.DataFrame, table: dict | None 
         for ep in trip_eps.itertuples():
             linked = trip_links[trip_links["episode"] == ep.episode]
             warning = linked["warning_before_dtc_s"].max() if len(linked) else None
+            warning = None if warning is None or pd.isna(warning) else float(warning)
             findings.append(Finding(
                 start_ms=int(ep.start_ms),
                 end_ms=int(ep.end_ms),
@@ -93,7 +94,7 @@ def diagnose(scored: pd.DataFrame, dtc_events: pd.DataFrame, table: dict | None 
                 "severity": info.severity,
                 "advice": info.advice,
                 "possible_causes": info.possible_causes,
-                "time_ms": int(link.dtc_time_ms),
+                "time_ms": int(link.dtc_time_ms) if link.time_known else None,
                 "warning_before_dtc_s": None if pd.isna(link.warning_before_dtc_s) else float(link.warning_before_dtc_s),
             })
 

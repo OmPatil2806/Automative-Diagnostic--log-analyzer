@@ -73,3 +73,43 @@ def load_vehicle_info(directory: Path = VED_STATIC_DIR) -> pd.DataFrame:
     info = info.replace("NO DATA", pd.NA)
     info["weight_lb"] = pd.to_numeric(info["weight_lb"], errors="coerce")
     return info.drop_duplicates("vehicle_id").reset_index(drop=True)
+
+
+# --- user-supplied trip logs ----------------------------------------------
+
+REQUIRED_LOG_COLUMNS = ["time_ms", "speed_kmh", "engine_rpm"]
+OPTIONAL_LOG_COLUMNS = [
+    "maf_gs", "absolute_load_pct",
+    "stft_b1_pct", "ltft_b1_pct", "stft_b2_pct", "ltft_b2_pct",
+    "hv_battery_voltage_v", "hv_battery_current_a", "hv_battery_soc_pct",
+]
+
+
+def load_trip_log(path: Path, vehicle_id: int | None = None) -> pd.DataFrame:
+    """Load a driving log CSV supplied by the user.
+
+    Accepts the project's standard column names or raw VED names. Requires
+    time_ms, speed_kmh and engine_rpm; other signals are optional and added as
+    empty columns if missing. `vehicle_id` (argument, else a column, else -1
+    for "unknown vehicle") selects the learned per-vehicle baseline.
+    `trip_id` defaults to 1, so a file may also hold several trips.
+    """
+    df = pd.read_csv(path).rename(columns=VED_COLUMNS)
+    missing = [c for c in REQUIRED_LOG_COLUMNS if c not in df]
+    if missing:
+        raise ValueError(
+            f"{Path(path).name} is missing required columns: {missing}. "
+            f"Required: {REQUIRED_LOG_COLUMNS}; optional: {OPTIONAL_LOG_COLUMNS}"
+        )
+    if vehicle_id is not None:
+        df["vehicle_id"] = vehicle_id
+    elif "vehicle_id" not in df:
+        df["vehicle_id"] = -1
+    if "trip_id" not in df:
+        df["trip_id"] = 1
+    for column in OPTIONAL_LOG_COLUMNS:
+        if column not in df:
+            df[column] = float("nan")
+    if "timestamp" in df:
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    return df

@@ -30,5 +30,7 @@ data/processed/*
 !data/processed/.gitkeep
 models/*
 !models/.gitkeep
+# demo model trained on the first VED week, so the samples run without retraining
+!models/anomaly_detector.joblib
 reports/*
 !reports/.gitkeep
