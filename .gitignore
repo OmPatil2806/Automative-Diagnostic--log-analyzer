@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Tooling
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Data (downloaded or generated — keep out of git)
+data/raw/*
+data/synthetic/*
+!data/raw/.gitkeep
+!data/synthetic/.gitkeep
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
