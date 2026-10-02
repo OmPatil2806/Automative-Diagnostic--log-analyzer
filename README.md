@@ -213,15 +213,15 @@ Row level (fully developed faults vs normal driving): precision 0.93, recall 0.8
 
 Airflow is compared with the vehicle's baseline, or with earlier in the same trip if the vehicle has none. If neither is available the answer is "running lean, cause unclear" rather than a guess.
 
-**Health score** (`src/analyzer/analysis/health_score.py`): `100 - DTC penalties (critical 50, high 35, medium 25, low 10) - early warning penalties (5-20 each, max 30)`. 80-100 good, 50-79 needs attention, below 50 or any critical DTC = critical.
+**Health score** (`src/analyzer/analysis/health_score.py`): `100 - DTC penalties (critical 50, high 35, medium 25, low 10) - early warning penalties (10-25 each, max 40)`. 80-100 good, 50-79 needs attention, below 50 or any critical DTC = critical.
 
 **Results** on the 240 synthetic trips:
 
 | | Result |
 |---|---|
 | Correct root cause (faulty trips with an anomaly) | 87% (misfire 100%, rich 94%, speed 94%, battery 88%, vacuum leak 84%, MAF 65%) |
-| Normal trips rated good | 100% (mean score 100) |
-| Faulty trips flagged | 100% (mean score 69) |
+| Normal trips rated good | 98% (mean score 99) |
+| Faulty trips flagged | 100% (mean score 68) |
 
 Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; the root cause result is the more meaningful one.
 
@@ -232,6 +232,7 @@ Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; t
 | [`01_data_exploration.ipynb`](notebooks/01_data_exploration.ipynb) | VED overview, which signals each vehicle type records, signal distributions, per-vehicle differences, airflow and battery physics, and how each finding shaped the design |
 | [`02_synthetic_faults.ipynb`](notebooks/02_synthetic_faults.ipynb) | How the six faults are injected: fault timeline, before/after signals, fault size vs normal driving, early-warning window, limitations |
 | [`03_anomaly_detection.ipynb`](notebooks/03_anomaly_detection.ipynb) | The detector: features, why Isolation Forest alone flattens outside the training range, ablation (forest only F1 0.61 vs combined 0.87), results per fault, warning time, alarm persistence trade-off, one trip step by step |
+| [`04_diagnosis_demo.ipynb`](notebooks/04_diagnosis_demo.ipynb) | End to end on the sample trips (no download needed): each pipeline step, the finished report, all samples, different fault-code inputs, missing signals |
 
 Notebooks are committed with their outputs, so the charts show on GitHub. To re-run them, download the data first (`python scripts/download_ved.py --weeks 4`; notebooks 2 and 3 also need `python scripts/prepare_ved.py --weeks 1`).
 

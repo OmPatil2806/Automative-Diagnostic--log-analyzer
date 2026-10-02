@@ -115,14 +115,14 @@ def test_trip_health():
     assert trip_health(["medium"], []) == 75
     assert trip_health(["high", "low"], []) == 55
     assert trip_health(["critical", "critical", "critical"], []) == 0      # floor at 0
-    assert trip_health([], [(4.0, 120)]) == 80                             # strong, long anomaly: -20
-    assert trip_health([], [(4.0, 120)] * 5) == 70                         # anomaly penalty capped at 30
+    assert trip_health([], [(4.0, 120)]) == 75                             # strong, long anomaly: -25
+    assert trip_health([], [(4.0, 120)] * 5) == 60                         # anomaly penalty capped at 40
 
 
 def test_anomaly_penalty_scales_with_strength_and_duration():
-    assert anomaly_penalty(1.0, 60) == 5
-    assert anomaly_penalty(4.0, 60) == 20
-    assert anomaly_penalty(4.0, 30) == 10
+    assert anomaly_penalty(1.0, 60) == 10
+    assert anomaly_penalty(4.0, 60) == 25
+    assert anomaly_penalty(4.0, 30) == 12.5
 
 
 def test_health_status():
@@ -172,7 +172,7 @@ def test_early_warning_without_dtc():
     finding = trip.main_finding
     assert finding.is_early_warning
     assert finding.root_cause.cause == "hv_battery_degradation"
-    assert trip.health_score < 100 and trip.status == GOOD   # one 90 s warning: -12.5 -> 88
+    assert trip.health_score == 82 and trip.status == GOOD   # one 89 s warning at peak 2.5: -17.5
 
 
 def test_end_to_end_with_real_detector():
@@ -185,3 +185,13 @@ def test_end_to_end_with_real_detector():
     assert result.main_finding.root_cause.cause == "rich_injector"
     assert result.main_finding.dtc_codes == ["P0172"]
     assert result.status == ATTENTION
+
+
+def test_strong_early_warning_needs_attention():
+    # a strong anomaly lasting minutes, with no fault code, should not leave the car "good"
+    scored = scored_trip(range(20, 200), total_trim_rel_median=23, maf_residual_median=1)
+    for row in [scored["alarm"]]:
+        scored.loc[row, "anomaly_score"] = 3.3
+    trip = diagnose(scored, pd.DataFrame(columns=["vehicle_id", "trip_id", "code", "time_ms"]))[0]
+    assert trip.main_finding.root_cause.cause == "vacuum_leak"
+    assert trip.status == ATTENTION

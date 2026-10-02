@@ -5,9 +5,10 @@
 - Each DTC costs points by severity (critical 50, high 35, medium 25, low 10),
   so any medium or worse DTC moves the vehicle out of "good".
 - Each anomaly episode NOT explained by a DTC (an early warning) costs
-  5-20 points depending on how strong it is, scaled down if it is short.
-  Anomalies linked to a DTC are already covered by that DTC's penalty.
-  Anomaly penalties are capped at 30 in total.
+  10-25 points depending on how strong it is, scaled down if it is shorter
+  than a minute, so a strong, persistent anomaly moves the vehicle out of
+  "good" even before any code is set. Anomalies linked to a DTC are already
+  covered by that DTC's penalty. Anomaly penalties are capped at 40 in total.
 
 Status: 80-100 good, 50-79 needs attention, 0-49 critical. Any critical DTC
 makes the status critical whatever the score.
@@ -16,15 +17,15 @@ makes the status critical whatever the score.
 import pandas as pd
 
 DTC_PENALTY = {"critical": 50, "high": 35, "medium": 25, "low": 10, "unknown": 25}
-MAX_ANOMALY_PENALTY = 30
+MAX_ANOMALY_PENALTY = 40
 
 GOOD, ATTENTION, CRITICAL = "good", "needs attention", "critical"
 
 
 def anomaly_penalty(peak_score: float, duration_s: float) -> float:
-    """5 points for a borderline anomaly up to 20 for a strong one, less if short (< 60 s)."""
+    """10 points for a borderline anomaly up to 25 for a strong one, less if short (< 60 s)."""
     strength = min(max(peak_score - 1, 0), 3)
-    return (5 + 5 * strength) * min(1.0, duration_s / 60)
+    return (10 + 5 * strength) * min(1.0, duration_s / 60)
 
 
 def trip_health(dtc_severities: list[str], unexplained_anomalies: list[tuple[float, float]]) -> int:
