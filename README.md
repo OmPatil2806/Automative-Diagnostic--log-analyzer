@@ -231,8 +231,9 @@ Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; t
 |---|---|
 | [`01_data_exploration.ipynb`](notebooks/01_data_exploration.ipynb) | VED overview, which signals each vehicle type records, signal distributions, per-vehicle differences, airflow and battery physics, and how each finding shaped the design |
 | [`02_synthetic_faults.ipynb`](notebooks/02_synthetic_faults.ipynb) | How the six faults are injected: fault timeline, before/after signals, fault size vs normal driving, early-warning window, limitations |
+| [`03_anomaly_detection.ipynb`](notebooks/03_anomaly_detection.ipynb) | The detector: features, why Isolation Forest alone flattens outside the training range, ablation (forest only F1 0.61 vs combined 0.87), results per fault, warning time, alarm persistence trade-off, one trip step by step |
 
-Notebooks are committed with their outputs, so the charts show on GitHub. To re-run them, download the data first (`python scripts/download_ved.py --weeks 4`; notebook 2 also needs `python scripts/prepare_ved.py --weeks 1`).
+Notebooks are committed with their outputs, so the charts show on GitHub. To re-run them, download the data first (`python scripts/download_ved.py --weeks 4`; notebooks 2 and 3 also need `python scripts/prepare_ved.py --weeks 1`).
 
 ## Notes on the included model
 
