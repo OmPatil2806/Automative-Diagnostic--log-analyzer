@@ -77,9 +77,13 @@ class AnomalyDetector:
         return self
 
     def score(self, logs: pd.DataFrame) -> pd.DataFrame:
-        """Score every row. Returns keys, per-group scores, overall score, suspect group, alarm."""
+        """Score every row.
+
+        Returns keys, the feature values (used later as evidence), per-group
+        scores, overall score, suspect group and alarm.
+        """
         features = build_features(logs, self.baseline)
-        out = features[TRIP_KEYS + ["time_ms"]].copy()
+        out = features.copy()
         for group, model in self.models.items():
             columns = FEATURE_GROUPS[group]
             X = features[columns].dropna()

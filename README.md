@@ -72,7 +72,9 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 - [ ] **MVP:** show basic charts
 - [x] **Step 3:** synthetic fault generator
 - [x] **Step 4:** ML anomaly detection
-- [ ] **v3:** fault correlation, vehicle health score and diagnosis report
+- [x] **Step 5:** fault correlation, root cause and vehicle health score
+- [ ] **Step 6:** diagnosis report
+- [ ] **Step 7:** dashboard
 
 ## Getting started
 
@@ -93,6 +95,9 @@ python scripts/generate_synthetic.py
 
 # 4. Train and evaluate the anomaly detector -> models/, reports/
 python scripts/train_model.py
+
+# 5. Diagnose trips: root cause + health score -> reports/
+python scripts/evaluate_analysis.py
 
 # Run tests
 pytest
@@ -123,6 +128,35 @@ Row level (fully developed faults vs normal driving): precision 0.93, recall 0.8
 - Alarm settings (window, persistence) were chosen on this same synthetic set; a separate validation set would give a less optimistic estimate.
 - Misfire is the hardest fault: VED samples about once per second, too slow to see individual misfires.
 - Most false alarms come from the battery model, whose simple linear voltage model does not capture effects like temperature.
+
+## Root cause and health score
+
+**Correlation** (`src/analyzer/analysis/correlation.py`): alarms are grouped into anomaly episodes, and each DTC is linked to the earliest episode in a matching subsystem (from the DTC's related signals). The gap between them is the early warning time. Episodes with no DTC are reported as early warnings.
+
+**Root cause** is inferred from the signals only, the way a technician reads live data, so it also works before any DTC is set:
+
+| Signals | Likely cause |
+|---|---|
+| Fuel trims high, airflow normal | Vacuum leak |
+| Fuel trims high, airflow reading low | Dirty or faulty MAF sensor |
+| Fuel trims low | Running rich (leaking injector / high fuel pressure) |
+| RPM unstable at steady speed | Misfire |
+| Speed reads 0 while moving | Faulty speed sensor |
+| Battery voltage below expected | Hybrid battery degradation |
+
+Airflow is compared with the vehicle's baseline, or with earlier in the same trip if the vehicle has none. If neither is available the answer is "running lean, cause unclear" rather than a guess.
+
+**Health score** (`src/analyzer/analysis/health_score.py`): `100 - DTC penalties (critical 50, high 35, medium 25, low 10) - early warning penalties (5-20 each, max 30)`. 80-100 good, 50-79 needs attention, below 50 or any critical DTC = critical.
+
+**Results** on the 240 synthetic trips:
+
+| | Result |
+|---|---|
+| Correct root cause (faulty trips with an anomaly) | 87% (misfire 100%, rich 94%, speed 94%, battery 88%, vacuum leak 84%, MAF 65%) |
+| Normal trips rated good | 100% (mean score 100) |
+| Faulty trips flagged | 100% (mean score 69) |
+
+Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; the root cause result is the more meaningful one.
 
 ## Tech stack
 

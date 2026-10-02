@@ -163,6 +163,10 @@ def build_features(
 
     # air and battery
     f["maf_residual_median"] = roll(res["maf_residual_pct"], "median")
+    # raw airflow per (rpm x load): not used by the model, but lets the diagnosis
+    # compare airflow with earlier in the same trip when a vehicle has no baseline
+    valid = (rpm > 500) & (logs["absolute_load_pct"] > 5)
+    f["maf_ratio_median"] = roll((logs["maf_gs"] / (rpm * logs["absolute_load_pct"] / 100)).where(valid), "median")
     f["hv_voltage_residual_median"] = roll(res["hv_voltage_residual_v"], "median")
     f["hv_voltage_residual_min"] = roll(res["hv_voltage_residual_v"], "min")
 
