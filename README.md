@@ -225,10 +225,21 @@ Airflow is compared with the vehicle's baseline, or with earlier in the same tri
 
 Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; the root cause result is the more meaningful one.
 
+## Notebooks
+
+| Notebook | What it shows |
+|---|---|
+| [`01_data_exploration.ipynb`](notebooks/01_data_exploration.ipynb) | VED overview, which signals each vehicle type records, signal distributions, per-vehicle differences, airflow and battery physics, and how each finding shaped the design |
+
+Notebooks are committed with their outputs, so the charts show on GitHub. To re-run them, download the data first (`python scripts/download_ved.py --weeks 4`).
+
 ## Notes on the included model
 
 `models/anomaly_detector.joblib` was trained on the first VED week with scikit-learn 1.9. If your
 scikit-learn version cannot load it, retrain with the full pipeline above.
+
+In the first VED week only ~15% of trips record fuel trims (70-90% from week 2 on, see notebook 1), so
+the fuel-system detector saw relatively little fuel-trim data. Training on more weeks should improve it.
 
 ## Tech stack
 
