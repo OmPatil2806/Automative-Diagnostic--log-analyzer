@@ -70,7 +70,8 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 - [x] **Step 1:** download, load and clean VED logs
 - [x] **Step 2:** DTC reference table and decoder
 - [ ] **MVP:** show basic charts
-- [ ] **v2:** synthetic fault generator and ML anomaly detection
+- [x] **Step 3:** synthetic fault generator
+- [ ] **v2:** ML anomaly detection
 - [ ] **v3:** fault correlation, vehicle health score and diagnosis report
 
 ## Getting started
@@ -86,6 +87,9 @@ python scripts/download_ved.py --weeks 4
 
 # 2. Clean it -> data/processed/ved_clean.parquet
 python scripts/prepare_ved.py
+
+# 3. Inject faults -> data/synthetic/
+python scripts/generate_synthetic.py
 
 # Run tests
 pytest
