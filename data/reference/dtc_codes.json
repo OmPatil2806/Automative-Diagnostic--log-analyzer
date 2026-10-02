@@ -1,1 +1,755 @@
-{}
+{
+  "B0001": {
+    "description": "Driver Frontal Stage 1 Deployment Control",
+    "severity": "critical",
+    "possible_causes": [
+      "Faulty airbag module or clock spring",
+      "Damaged airbag wiring"
+    ],
+    "related_signals": []
+  },
+  "C0035": {
+    "description": "Left Front Wheel Speed Sensor Circuit",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty wheel speed sensor",
+      "Damaged sensor wiring",
+      "Damaged tone ring"
+    ],
+    "related_signals": [
+      "speed_kmh"
+    ]
+  },
+  "C0040": {
+    "description": "Right Front Wheel Speed Sensor Circuit",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty wheel speed sensor",
+      "Damaged sensor wiring",
+      "Damaged tone ring"
+    ],
+    "related_signals": [
+      "speed_kmh"
+    ]
+  },
+  "P0100": {
+    "description": "Mass or Volume Air Flow Sensor A Circuit",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty MAF sensor",
+      "Damaged MAF wiring or connector",
+      "Air leak after the MAF sensor"
+    ],
+    "related_signals": [
+      "maf_gs",
+      "absolute_load_pct"
+    ]
+  },
+  "P0101": {
+    "description": "Mass or Volume Air Flow Sensor A Circuit Range/Performance",
+    "severity": "medium",
+    "possible_causes": [
+      "Dirty or contaminated MAF sensor",
+      "Vacuum leak",
+      "Clogged air filter"
+    ],
+    "related_signals": [
+      "maf_gs",
+      "absolute_load_pct",
+      "stft_b1_pct",
+      "ltft_b1_pct"
+    ]
+  },
+  "P0102": {
+    "description": "Mass or Volume Air Flow Sensor A Circuit Low",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty MAF sensor",
+      "Open or shorted MAF signal wire",
+      "Air leak between MAF and throttle body"
+    ],
+    "related_signals": [
+      "maf_gs",
+      "absolute_load_pct"
+    ]
+  },
+  "P0103": {
+    "description": "Mass or Volume Air Flow Sensor A Circuit High",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty MAF sensor",
+      "MAF signal wire shorted to voltage"
+    ],
+    "related_signals": [
+      "maf_gs",
+      "absolute_load_pct"
+    ]
+  },
+  "P0110": {
+    "description": "Intake Air Temperature Sensor 1 Circuit",
+    "severity": "low",
+    "possible_causes": [
+      "Faulty IAT sensor",
+      "Damaged IAT wiring"
+    ],
+    "related_signals": []
+  },
+  "P0115": {
+    "description": "Engine Coolant Temperature Sensor 1 Circuit",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty coolant temperature sensor",
+      "Damaged sensor wiring or connector"
+    ],
+    "related_signals": []
+  },
+  "P0117": {
+    "description": "Engine Coolant Temperature Sensor 1 Circuit Low",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty coolant temperature sensor",
+      "Sensor signal wire shorted to ground"
+    ],
+    "related_signals": []
+  },
+  "P0118": {
+    "description": "Engine Coolant Temperature Sensor 1 Circuit High",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty coolant temperature sensor",
+      "Open circuit in sensor wiring"
+    ],
+    "related_signals": []
+  },
+  "P0120": {
+    "description": "Throttle/Pedal Position Sensor/Switch A Circuit",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty throttle position sensor",
+      "Damaged wiring",
+      "Faulty throttle body"
+    ],
+    "related_signals": [
+      "absolute_load_pct",
+      "engine_rpm"
+    ]
+  },
+  "P0128": {
+    "description": "Coolant Thermostat (Coolant Temperature Below Thermostat Regulating Temperature)",
+    "severity": "low",
+    "possible_causes": [
+      "Thermostat stuck open",
+      "Faulty coolant temperature sensor",
+      "Low coolant level"
+    ],
+    "related_signals": []
+  },
+  "P0130": {
+    "description": "O2 Sensor Circuit (Bank 1 Sensor 1)",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty oxygen sensor",
+      "Damaged sensor wiring",
+      "Exhaust leak near the sensor"
+    ],
+    "related_signals": [
+      "stft_b1_pct",
+      "ltft_b1_pct"
+    ]
+  },
+  "P0133": {
+    "description": "O2 Sensor Circuit Slow Response (Bank 1 Sensor 1)",
+    "severity": "low",
+    "possible_causes": [
+      "Aging or contaminated oxygen sensor",
+      "Exhaust leak",
+      "Vacuum leak"
+    ],
+    "related_signals": [
+      "stft_b1_pct",
+      "ltft_b1_pct"
+    ]
+  },
+  "P0135": {
+    "description": "O2 Sensor Heater Circuit (Bank 1 Sensor 1)",
+    "severity": "low",
+    "possible_causes": [
+      "Failed oxygen sensor heater",
+      "Blown heater fuse",
+      "Damaged wiring"
+    ],
+    "related_signals": []
+  },
+  "P0171": {
+    "description": "System Too Lean (Bank 1)",
+    "severity": "medium",
+    "possible_causes": [
+      "Vacuum leak",
+      "Dirty or faulty MAF sensor",
+      "Weak fuel pump or clogged fuel filter",
+      "Leaking intake gasket"
+    ],
+    "related_signals": [
+      "stft_b1_pct",
+      "ltft_b1_pct",
+      "maf_gs",
+      "absolute_load_pct"
+    ]
+  },
+  "P0172": {
+    "description": "System Too Rich (Bank 1)",
+    "severity": "medium",
+    "possible_causes": [
+      "Leaking fuel injector",
+      "Faulty MAF sensor",
+      "High fuel pressure",
+      "Faulty oxygen sensor"
+    ],
+    "related_signals": [
+      "stft_b1_pct",
+      "ltft_b1_pct",
+      "maf_gs",
+      "absolute_load_pct"
+    ]
+  },
+  "P0174": {
+    "description": "System Too Lean (Bank 2)",
+    "severity": "medium",
+    "possible_causes": [
+      "Vacuum leak",
+      "Dirty or faulty MAF sensor",
+      "Low fuel pressure"
+    ],
+    "related_signals": [
+      "stft_b2_pct",
+      "ltft_b2_pct",
+      "maf_gs",
+      "absolute_load_pct"
+    ]
+  },
+  "P0175": {
+    "description": "System Too Rich (Bank 2)",
+    "severity": "medium",
+    "possible_causes": [
+      "Leaking fuel injector",
+      "Faulty MAF sensor",
+      "High fuel pressure"
+    ],
+    "related_signals": [
+      "stft_b2_pct",
+      "ltft_b2_pct",
+      "maf_gs",
+      "absolute_load_pct"
+    ]
+  },
+  "P0200": {
+    "description": "Injector Circuit/Open",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty fuel injector",
+      "Open or shorted injector wiring",
+      "Faulty engine control module"
+    ],
+    "related_signals": [
+      "engine_rpm",
+      "stft_b1_pct",
+      "ltft_b1_pct"
+    ]
+  },
+  "P0201": {
+    "description": "Injector Circuit/Open - Cylinder 1",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty cylinder 1 injector",
+      "Damaged injector wiring or connector"
+    ],
+    "related_signals": [
+      "engine_rpm",
+      "stft_b1_pct",
+      "ltft_b1_pct"
+    ]
+  },
+  "P0217": {
+    "description": "Engine Coolant Over Temperature Condition",
+    "severity": "critical",
+    "possible_causes": [
+      "Low coolant level or leak",
+      "Failed water pump",
+      "Stuck-closed thermostat",
+      "Cooling fan failure"
+    ],
+    "related_signals": []
+  },
+  "P0219": {
+    "description": "Engine Overspeed Condition",
+    "severity": "high",
+    "possible_causes": [
+      "Engine revved beyond its limit",
+      "Transmission slipping",
+      "Incorrect downshift"
+    ],
+    "related_signals": [
+      "engine_rpm",
+      "speed_kmh"
+    ]
+  },
+  "P0230": {
+    "description": "Fuel Pump Primary Circuit",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty fuel pump relay",
+      "Blown fuel pump fuse",
+      "Damaged fuel pump wiring"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0300": {
+    "description": "Random/Multiple Cylinder Misfire Detected",
+    "severity": "high",
+    "possible_causes": [
+      "Worn spark plugs",
+      "Faulty ignition coils",
+      "Vacuum leak",
+      "Low fuel pressure"
+    ],
+    "related_signals": [
+      "engine_rpm",
+      "stft_b1_pct",
+      "ltft_b1_pct"
+    ]
+  },
+  "P0301": {
+    "description": "Cylinder 1 Misfire Detected",
+    "severity": "high",
+    "possible_causes": [
+      "Worn spark plug (cylinder 1)",
+      "Faulty ignition coil (cylinder 1)",
+      "Faulty fuel injector (cylinder 1)",
+      "Low compression"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0302": {
+    "description": "Cylinder 2 Misfire Detected",
+    "severity": "high",
+    "possible_causes": [
+      "Worn spark plug (cylinder 2)",
+      "Faulty ignition coil (cylinder 2)",
+      "Faulty fuel injector (cylinder 2)",
+      "Low compression"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0303": {
+    "description": "Cylinder 3 Misfire Detected",
+    "severity": "high",
+    "possible_causes": [
+      "Worn spark plug (cylinder 3)",
+      "Faulty ignition coil (cylinder 3)",
+      "Faulty fuel injector (cylinder 3)",
+      "Low compression"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0304": {
+    "description": "Cylinder 4 Misfire Detected",
+    "severity": "high",
+    "possible_causes": [
+      "Worn spark plug (cylinder 4)",
+      "Faulty ignition coil (cylinder 4)",
+      "Faulty fuel injector (cylinder 4)",
+      "Low compression"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0325": {
+    "description": "Knock Sensor 1 Circuit (Bank 1)",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty knock sensor",
+      "Damaged knock sensor wiring"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0335": {
+    "description": "Crankshaft Position Sensor A Circuit",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty crankshaft position sensor",
+      "Damaged sensor wiring",
+      "Damaged reluctor ring"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0340": {
+    "description": "Camshaft Position Sensor A Circuit (Bank 1 or Single Sensor)",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty camshaft position sensor",
+      "Damaged sensor wiring",
+      "Timing belt or chain problem"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0401": {
+    "description": "Exhaust Gas Recirculation Flow Insufficient Detected",
+    "severity": "medium",
+    "possible_causes": [
+      "Clogged EGR passages",
+      "Faulty EGR valve",
+      "Faulty EGR position sensor"
+    ],
+    "related_signals": [
+      "absolute_load_pct"
+    ]
+  },
+  "P0420": {
+    "description": "Catalyst System Efficiency Below Threshold (Bank 1)",
+    "severity": "medium",
+    "possible_causes": [
+      "Worn catalytic converter",
+      "Faulty downstream oxygen sensor",
+      "Exhaust leak",
+      "Engine misfire damaging the catalyst"
+    ],
+    "related_signals": [
+      "stft_b1_pct",
+      "ltft_b1_pct"
+    ]
+  },
+  "P0430": {
+    "description": "Catalyst System Efficiency Below Threshold (Bank 2)",
+    "severity": "medium",
+    "possible_causes": [
+      "Worn catalytic converter",
+      "Faulty downstream oxygen sensor",
+      "Exhaust leak"
+    ],
+    "related_signals": [
+      "stft_b2_pct",
+      "ltft_b2_pct"
+    ]
+  },
+  "P0440": {
+    "description": "Evaporative Emission System",
+    "severity": "low",
+    "possible_causes": [
+      "Loose or damaged fuel cap",
+      "Faulty purge or vent valve",
+      "EVAP hose leak"
+    ],
+    "related_signals": []
+  },
+  "P0442": {
+    "description": "Evaporative Emission System Leak Detected (Small Leak)",
+    "severity": "low",
+    "possible_causes": [
+      "Loose fuel cap",
+      "Cracked EVAP hose",
+      "Faulty purge valve"
+    ],
+    "related_signals": []
+  },
+  "P0455": {
+    "description": "Evaporative Emission System Leak Detected (Large Leak)",
+    "severity": "low",
+    "possible_causes": [
+      "Missing or loose fuel cap",
+      "Disconnected EVAP hose",
+      "Faulty vent valve"
+    ],
+    "related_signals": []
+  },
+  "P0456": {
+    "description": "Evaporative Emission System Leak Detected (Very Small Leak)",
+    "severity": "low",
+    "possible_causes": [
+      "Fuel cap seal worn",
+      "Tiny crack in EVAP hose"
+    ],
+    "related_signals": []
+  },
+  "P0500": {
+    "description": "Vehicle Speed Sensor A",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty vehicle speed sensor",
+      "Damaged sensor wiring",
+      "Faulty ABS wheel speed signal"
+    ],
+    "related_signals": [
+      "speed_kmh"
+    ]
+  },
+  "P0505": {
+    "description": "Idle Air Control System",
+    "severity": "medium",
+    "possible_causes": [
+      "Dirty throttle body",
+      "Faulty idle air control valve",
+      "Vacuum leak"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0506": {
+    "description": "Idle Control System RPM Lower Than Expected",
+    "severity": "low",
+    "possible_causes": [
+      "Dirty throttle body",
+      "Restricted air intake",
+      "Faulty idle air control valve"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0507": {
+    "description": "Idle Control System RPM Higher Than Expected",
+    "severity": "low",
+    "possible_causes": [
+      "Vacuum leak",
+      "Dirty throttle body",
+      "Faulty idle air control valve"
+    ],
+    "related_signals": [
+      "engine_rpm"
+    ]
+  },
+  "P0562": {
+    "description": "System Voltage Low",
+    "severity": "medium",
+    "possible_causes": [
+      "Weak 12 V battery",
+      "Faulty alternator",
+      "Corroded battery terminals"
+    ],
+    "related_signals": []
+  },
+  "P0563": {
+    "description": "System Voltage High",
+    "severity": "medium",
+    "possible_causes": [
+      "Faulty voltage regulator",
+      "Faulty alternator"
+    ],
+    "related_signals": []
+  },
+  "P0600": {
+    "description": "Serial Communication Link",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty control module",
+      "Damaged communication wiring"
+    ],
+    "related_signals": []
+  },
+  "P0601": {
+    "description": "Internal Control Module Memory Check Sum Error",
+    "severity": "critical",
+    "possible_causes": [
+      "Corrupted control module software",
+      "Failed control module"
+    ],
+    "related_signals": []
+  },
+  "P0606": {
+    "description": "Control Module Processor",
+    "severity": "critical",
+    "possible_causes": [
+      "Failed engine control module",
+      "Poor module ground or power supply"
+    ],
+    "related_signals": []
+  },
+  "P0700": {
+    "description": "Transmission Control System (MIL Request)",
+    "severity": "high",
+    "possible_causes": [
+      "Transmission control module detected a fault; read TCM codes"
+    ],
+    "related_signals": [
+      "speed_kmh",
+      "engine_rpm"
+    ]
+  },
+  "P0715": {
+    "description": "Input/Turbine Speed Sensor A Circuit",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty input speed sensor",
+      "Damaged sensor wiring"
+    ],
+    "related_signals": [
+      "speed_kmh",
+      "engine_rpm"
+    ]
+  },
+  "P0720": {
+    "description": "Output Speed Sensor Circuit",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty output speed sensor",
+      "Damaged sensor wiring"
+    ],
+    "related_signals": [
+      "speed_kmh"
+    ]
+  },
+  "P0730": {
+    "description": "Incorrect Gear Ratio",
+    "severity": "high",
+    "possible_causes": [
+      "Low or dirty transmission fluid",
+      "Worn clutches or bands",
+      "Faulty shift solenoid"
+    ],
+    "related_signals": [
+      "speed_kmh",
+      "engine_rpm"
+    ]
+  },
+  "P0740": {
+    "description": "Torque Converter Clutch Circuit/Open",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty torque converter clutch solenoid",
+      "Damaged wiring",
+      "Low transmission fluid"
+    ],
+    "related_signals": [
+      "speed_kmh",
+      "engine_rpm"
+    ]
+  },
+  "P0A7F": {
+    "description": "Hybrid/EV Battery Pack Deterioration",
+    "severity": "high",
+    "possible_causes": [
+      "Aging hybrid battery cells",
+      "Cell imbalance",
+      "Battery cooling problem"
+    ],
+    "related_signals": [
+      "hv_battery_voltage_v",
+      "hv_battery_current_a",
+      "hv_battery_soc_pct"
+    ]
+  },
+  "P0A80": {
+    "description": "Replace Hybrid/EV Battery Pack",
+    "severity": "critical",
+    "possible_causes": [
+      "One or more battery modules failed",
+      "Severe cell imbalance"
+    ],
+    "related_signals": [
+      "hv_battery_voltage_v",
+      "hv_battery_current_a",
+      "hv_battery_soc_pct"
+    ]
+  },
+  "P0A94": {
+    "description": "DC/DC Converter Performance",
+    "severity": "high",
+    "possible_causes": [
+      "Failed inverter or DC/DC converter",
+      "Inverter coolant pump failure"
+    ],
+    "related_signals": [
+      "hv_battery_voltage_v",
+      "hv_battery_current_a",
+      "hv_battery_soc_pct"
+    ]
+  },
+  "P0AFA": {
+    "description": "Hybrid/EV Battery System Voltage Low",
+    "severity": "high",
+    "possible_causes": [
+      "Weak battery modules",
+      "Deeply discharged battery",
+      "Faulty voltage sensing circuit"
+    ],
+    "related_signals": [
+      "hv_battery_voltage_v",
+      "hv_battery_current_a",
+      "hv_battery_soc_pct"
+    ]
+  },
+  "P0AFB": {
+    "description": "Hybrid/EV Battery System Voltage High",
+    "severity": "high",
+    "possible_causes": [
+      "Faulty voltage sensing circuit",
+      "Charging control fault"
+    ],
+    "related_signals": [
+      "hv_battery_voltage_v",
+      "hv_battery_current_a",
+      "hv_battery_soc_pct"
+    ]
+  },
+  "U0073": {
+    "description": "Control Module Communication Bus A Off",
+    "severity": "high",
+    "possible_causes": [
+      "CAN bus wiring short or open",
+      "Faulty module pulling the bus down"
+    ],
+    "related_signals": []
+  },
+  "U0100": {
+    "description": "Lost Communication With ECM/PCM A",
+    "severity": "critical",
+    "possible_causes": [
+      "Engine control module not powered",
+      "CAN bus wiring fault",
+      "Failed engine control module"
+    ],
+    "related_signals": []
+  },
+  "U0101": {
+    "description": "Lost Communication With TCM",
+    "severity": "high",
+    "possible_causes": [
+      "Transmission control module not powered",
+      "CAN bus wiring fault"
+    ],
+    "related_signals": []
+  },
+  "U0121": {
+    "description": "Lost Communication With Anti-Lock Brake System (ABS) Control Module",
+    "severity": "high",
+    "possible_causes": [
+      "ABS module not powered",
+      "CAN bus wiring fault"
+    ],
+    "related_signals": []
+  },
+  "U0140": {
+    "description": "Lost Communication With Body Control Module",
+    "severity": "medium",
+    "possible_causes": [
+      "Body control module not powered",
+      "CAN bus wiring fault"
+    ],
+    "related_signals": []
+  }
+}

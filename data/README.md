@@ -28,5 +28,15 @@ Large datasets are **not** stored in this repository. Download or generate them 
 
 ## Reference: DTC table
 
-- **Location:** `data/reference/`
-- **Content:** common OBD-II fault codes (SAE J2012 generic codes) with descriptions, severity and likely causes
+- **Location:** `data/reference/dtc_codes.json`
+- **Content:** 64 common fault codes across powertrain (P), chassis (C), body (B) and network (U), including hybrid battery codes. Descriptions follow the SAE J2012 generic definitions; severity, causes and related signals were written for this project.
+- **Fields per code:**
+
+| Field | Example (`P0171`) |
+|---|---|
+| `description` | System Too Lean (Bank 1) |
+| `severity` | `low` / `medium` / `high` / `critical` |
+| `possible_causes` | Vacuum leak, dirty MAF sensor, weak fuel pump, ... |
+| `related_signals` | VED signals that show the fault: `stft_b1_pct`, `ltft_b1_pct`, `maf_gs`, ... |
+
+`related_signals` links each fault to the sensor data, which is used later to connect anomalies to fault codes. Codes not in the table are still decoded by structure (system, generic vs manufacturer-specific, subsystem).

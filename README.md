@@ -68,7 +68,8 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 ## Roadmap
 
 - [x] **Step 1:** download, load and clean VED logs
-- [ ] **MVP:** decode DTCs, show basic charts
+- [x] **Step 2:** DTC reference table and decoder
+- [ ] **MVP:** show basic charts
 - [ ] **v2:** synthetic fault generator and ML anomaly detection
 - [ ] **v3:** fault correlation, vehicle health score and diagnosis report
 
