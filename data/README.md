@@ -4,10 +4,21 @@ Large datasets are **not** stored in this repository. Download or generate them 
 
 ## 1. Vehicle Energy Dataset (VED): real data
 
-- **Source:** https://github.com/gsoh/VED
+- **Source:** https://github.com/gsoh/VED (Apache-2.0 license)
 - **Content:** OBD-II driving logs (speed, RPM, temperatures, fuel and battery data) from a fleet of ICE, hybrid and electric vehicles
-- **Location:** `data/raw/`
-- **Citation:** if you use VED, cite the paper listed in its repository README
+- **Size:** 383 vehicles (264 ICE, 92 HEV, 27 PHEV/EV), Nov 2017 to Nov 2018, 54 weekly CSV files
+- **Location:** `data/raw/ved/` (`dynamic/` weekly logs, `static/` vehicle info)
+- **Get it:** `python scripts/download_ved.py [--weeks N]`, then `python scripts/prepare_ved.py`
+- **Citation:** G. Oh, D. J. LeBlanc, H. Peng, "Vehicle Energy Dataset (VED), A Large-scale Dataset for Vehicle Energy Consumption Research," *IEEE Transactions on Intelligent Transportation Systems*, 2020. https://doi.org/10.1109/TITS.2020.3035596
+
+### Cleaning (`src/analyzer/ingestion/cleaner.py`)
+
+1. Rename columns to standard snake_case names (`Vehicle Speed[km/h]` -> `speed_kmh`)
+2. Remove duplicate readings and sort each trip by time
+3. Replace physically impossible values with NaN (ranges in `src/analyzer/config.py`)
+4. Drop rows with neither speed nor RPM
+5. Add an absolute `timestamp` (VED `DayNum` = trip start, `Timestamp(ms)` = time into the trip)
+6. Attach vehicle type (ICE / HEV / PHEV / EV) and class from the static files
 
 ## 2. Synthetic fault logs: generated
 

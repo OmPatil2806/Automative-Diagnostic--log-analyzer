@@ -53,7 +53,7 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 │   ├── detection/          # anomaly.py
 │   ├── analysis/           # correlation.py, health_score.py
 │   └── reporting/          # report.py
-├── scripts/                # download_ved, generate_synthetic, train_model, run_pipeline
+├── scripts/                # download_ved, prepare_ved, generate_synthetic, train_model, run_pipeline
 ├── dashboard/
 │   ├── app.py
 │   ├── pages/              # Overview, Signal Explorer, Fault Analysis, Vehicle Health
@@ -67,7 +67,8 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 
 ## Roadmap
 
-- [ ] **MVP:** load VED logs, decode DTCs, show basic charts
+- [x] **Step 1:** download, load and clean VED logs
+- [ ] **MVP:** decode DTCs, show basic charts
 - [ ] **v2:** synthetic fault generator and ML anomaly detection
 - [ ] **v3:** fault correlation, vehicle health score and diagnosis report
 
@@ -78,6 +79,15 @@ git clone https://github.com/OmPatil2806/Automative-Diagnostic--log-analyzer.git
 cd Automative-Diagnostic--log-analyzer
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+
+# 1. Download VED (use --weeks N for a smaller sample; all 54 weeks is about 3 GB)
+python scripts/download_ved.py --weeks 4
+
+# 2. Clean it -> data/processed/ved_clean.parquet
+python scripts/prepare_ved.py
+
+# Run tests
+pytest
 ```
 
 ## Tech stack
