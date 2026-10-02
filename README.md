@@ -71,7 +71,7 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 - [x] **Step 2:** DTC reference table and decoder
 - [ ] **MVP:** show basic charts
 - [x] **Step 3:** synthetic fault generator
-- [ ] **v2:** ML anomaly detection
+- [x] **Step 4:** ML anomaly detection
 - [ ] **v3:** fault correlation, vehicle health score and diagnosis report
 
 ## Getting started
@@ -91,9 +91,38 @@ python scripts/prepare_ved.py
 # 3. Inject faults -> data/synthetic/
 python scripts/generate_synthetic.py
 
+# 4. Train and evaluate the anomaly detector -> models/, reports/
+python scripts/train_model.py
+
 # Run tests
 pytest
 ```
+
+## Anomaly detection
+
+**Features** (`src/analyzer/features/engineering.py`): each vehicle's normal behaviour is learned first (expected airflow for a given RPM and load, expected battery voltage for a given charge and current, usual fuel trim level). Features then measure deviation from it over a rolling 60-sample window: fuel trim offsets, airflow and voltage residuals, RPM jitter at steady speed, and impossible speed jumps.
+
+**Model** (`src/analyzer/detection/anomaly.py`): one detector per subsystem (engine, speed, fuel, air, battery), trained only on normal driving. Each combines an **Isolation Forest** (unusual combinations of features) with a **range score** (how far a feature is beyond its normal band). The range score is needed because Isolation Forest cannot extrapolate: a value far outside the training data scores about the same as the most extreme normal value. An alarm is raised when 70% of the last 30 readings are anomalous, and it names the suspect subsystem.
+
+**Evaluation**: trained on 609 normal VED trips, tested on 240 unseen synthetic trips (120 normal, 20 per fault), first VED week.
+
+| Fault | Detected | Detected before DTC | Suspect subsystem |
+|---|---|---|---|
+| Vacuum leak | 95% | 45% | fuel |
+| MAF drift | 100% | 60% | fuel |
+| Rich injector | 95% | 25% | fuel |
+| Misfire | 80% | 20% | engine |
+| Speed sensor failure | 90% | 50% | speed |
+| HV battery degradation | 80% | 55% | battery |
+| **Normal trips with a false alarm** | **7%** | | |
+
+Row level (fully developed faults vs normal driving): precision 0.93, recall 0.82, F1 0.87.
+
+**Limitations**
+- Faults are simulated, so these numbers show the method works on realistic signal changes, not how it performs on real failures.
+- Alarm settings (window, persistence) were chosen on this same synthetic set; a separate validation set would give a less optimistic estimate.
+- Misfire is the hardest fault: VED samples about once per second, too slow to see individual misfires.
+- Most false alarms come from the battery model, whose simple linear voltage model does not capture effects like temperature.
 
 ## Tech stack
 

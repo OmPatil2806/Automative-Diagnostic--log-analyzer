@@ -1,5 +1,6 @@
 """Shared pytest fixtures (small sample logs)."""
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -53,3 +54,28 @@ def static_dir(tmp_path):
         tmp_path / "VED_Static_Data_PHEV&EV.xlsx", index=False
     )
     return tmp_path
+
+
+def make_trip(vehicle_id: int, trip_id: int, n: int = 200, seed: int = 0) -> pd.DataFrame:
+    """A realistic-looking clean trip with every signal the faults need."""
+    rng = np.random.default_rng(seed)
+    t = np.arange(n) * 1000
+    # whole km/h, like real OBD-II speed readings
+    speed = np.clip(np.round(40 + 20 * np.sin(np.arange(n) / 20) + rng.normal(0, 2, n)), 0, None)
+    return pd.DataFrame({
+        "vehicle_id": vehicle_id,
+        "trip_id": trip_id,
+        "time_ms": t,
+        "timestamp": pd.Timestamp("2017-11-01") + pd.to_timedelta(t, unit="ms"),
+        "speed_kmh": speed,
+        "engine_rpm": 1500 + speed * 20 + rng.normal(0, 30, n),
+        "maf_gs": 8 + speed * 0.2,
+        "absolute_load_pct": 30 + rng.normal(0, 5, n),
+        "stft_b1_pct": rng.normal(0, 2, n),
+        "ltft_b1_pct": rng.normal(1, 0.5, n),
+        "stft_b2_pct": rng.normal(0, 2, n),
+        "ltft_b2_pct": rng.normal(1, 0.5, n),
+        "hv_battery_current_a": rng.normal(-15, 30, n),
+        "hv_battery_voltage_v": 300 + rng.normal(0, 3, n),
+        "hv_battery_soc_pct": np.linspace(60, 50, n),
+    })

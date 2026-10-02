@@ -39,13 +39,13 @@ intensity:          0           0 ───────────────�
 | Fault | DTC | What changes in the signals |
 |---|---|---|
 | `vacuum_leak` | P0171 | Fuel trims go positive (lean), most at idle; MAF reads a bit low |
-| `maf_drift` | P0101 | MAF under-reports airflow by 25-40%; fuel trims rise to compensate |
+| `maf_drift` | P0101 | MAF under-reports airflow by 30-50%; fuel trims rise to compensate |
 | `rich_injector` | P0172 | Fuel trims go negative (rich) |
 | `misfire` | P0300 | RPM becomes unsteady with sharp dips |
 | `speed_sensor_failure` | P0500 | Speed drops to 0 km/h while the engine is running |
 | `hv_battery_degradation` | P0A7F | Hybrid battery voltage sags under load; state of charge drops |
 
-Faults are only injected into trips that actually have the signals they need (e.g. fuel trims), and fault types are balanced.
+Fault sizes at full intensity are set near the levels where a real ECU stores the DTC (e.g. about ±25% total fuel trim for P0171 / P0172). Faults are only injected into trips that actually have the signals they need (e.g. fuel trims), and fault types are balanced.
 
 ### Output files
 

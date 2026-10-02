@@ -3,6 +3,9 @@
 Every fault is injected into a window of a real VED trip. `intensity` is an
 array (one value per row) that ramps from 0 to 1, so the fault develops
 gradually, like a real degrading part, instead of appearing all at once.
+
+Fault sizes at full intensity are set near the levels at which a real ECU
+would store the DTC, e.g. about +/-25% total fuel trim for P0171 / P0172.
 """
 
 from collections.abc import Callable
@@ -47,7 +50,7 @@ def _shift_trims(window, amount, rng, banks=(1, 2)):
 
 def inject_vacuum_leak(window, intensity, rng):
     """Unmetered air enters after the MAF: ECU adds fuel (trims go positive), worst at idle."""
-    peak = rng.uniform(12, 22)
+    peak = rng.uniform(25, 35)
     window = _shift_trims(window, intensity * peak * _low_load_factor(window), rng)
     window["maf_gs"] *= 1 - 0.10 * intensity
     return window
@@ -55,21 +58,21 @@ def inject_vacuum_leak(window, intensity, rng):
 
 def inject_maf_drift(window, intensity, rng):
     """Dirty MAF under-reports airflow; ECU compensates with positive trims."""
-    window["maf_gs"] *= 1 - intensity * rng.uniform(0.25, 0.40)
-    return _shift_trims(window, intensity * rng.uniform(8, 15), rng)
+    window["maf_gs"] *= 1 - intensity * rng.uniform(0.30, 0.50)
+    return _shift_trims(window, intensity * rng.uniform(15, 25), rng)
 
 
 def inject_rich_injector(window, intensity, rng):
     """Leaking injector adds extra fuel; ECU pulls fuel back (trims go negative)."""
-    return _shift_trims(window, -intensity * rng.uniform(12, 20), rng, banks=(1,))
+    return _shift_trims(window, -intensity * rng.uniform(20, 30), rng, banks=(1,))
 
 
 def inject_misfire(window, intensity, rng):
     """Misfiring cylinder makes RPM unsteady, with occasional sharp dips."""
     running = window["engine_rpm"].to_numpy() > 0
     n = len(window)
-    jitter = rng.normal(0, rng.uniform(60, 120), n) * intensity
-    dips = (rng.random(n) < 0.08 * intensity) * rng.uniform(100, 300, n)
+    jitter = rng.normal(0, rng.uniform(120, 220), n) * intensity
+    dips = (rng.random(n) < 0.15 * intensity) * rng.uniform(150, 400, n)
     window["engine_rpm"] += np.where(running, jitter - dips, 0)
     return window
 
