@@ -69,3 +69,10 @@ def test_upload_mode_waits_for_a_file():
     at.segmented_control(key="diag_source").set_value("Upload a CSV").run()
     assert not at.exception
     assert at.button(key="diag_run").disabled
+
+
+def test_diagnose_shows_all_download_buttons():
+    at = _open_diagnose()
+    at.button(key="diag_run").click().run()
+    labels = [b.proto.label for b in at.get("download_button")]
+    assert labels == ["Download all formats (ZIP)", "PDF", "HTML", "JSON", "Text", "Readings CSV"]

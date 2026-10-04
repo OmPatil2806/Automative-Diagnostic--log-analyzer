@@ -3,6 +3,7 @@
 import streamlit as st
 
 from dashboard import state
+from dashboard.components.downloads import trip_downloads
 from dashboard.components.inputs import trip_request
 from dashboard.components.layout import page_header
 from dashboard.components.report_view import report_view
@@ -45,6 +46,9 @@ label = current[0]
 if len(current) > 1:
     label = st.selectbox(f"This file contains {len(current)} trips", current, key="diag_trip_choice")
 
+result = state.get_trips()[label]
 st.divider()
 st.subheader(label)
-report_view(state.get_trips()[label].report)
+with st.container(border=True):
+    trip_downloads(result, label, key="diag_dl")
+report_view(result.report)
