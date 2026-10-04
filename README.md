@@ -56,10 +56,7 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 │   └── reporting/          # report.py, charts.py
 ├── scripts/                # download_ved, prepare_ved, generate_synthetic, train_model,
 │                           # evaluate_analysis, make_samples, run_pipeline
-├── dashboard/
-│   ├── app.py
-│   ├── pages/              # Overview, Signal Explorer, Fault Analysis, Vehicle Health
-│   └── components/         # charts.py
+├── dashboard/              # Streamlit app (see Dashboard below)
 ├── models/                 # trained anomaly detector (demo model included)
 ├── reports/                # generated reports (not committed)
 ├── notebooks/              # exploration
@@ -76,7 +73,7 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 - [x] **Step 4:** ML anomaly detection
 - [x] **Step 5:** fault correlation, root cause and vehicle health score
 - [x] **Step 6:** diagnosis report and end-to-end pipeline
-- [ ] **Step 7:** dashboard
+- [ ] **Step 7:** dashboard (in progress: navigation and page skeleton done)
 
 ## Quick start: diagnose a trip
 
@@ -224,6 +221,25 @@ Airflow is compared with the vehicle's baseline, or with earlier in the same tri
 | Faulty trips flagged | 100% (mean score 68) |
 
 Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; the root cause result is the more meaningful one.
+
+## Dashboard
+
+```bash
+streamlit run dashboard/app.py      # run from the project root
+```
+
+A Streamlit app with six pages: Overview, Diagnose a trip, Fleet reports, Signal explorer, Model performance and About. It is being built step by step; the navigation and page layout are in place.
+
+```
+dashboard/
+├── app.py           # entry point: page setup and navigation
+├── theme.py         # colors and chart style shared by all pages
+├── state.py         # trips diagnosed in this browser session
+├── pages/           # one file per page (layout only)
+├── components/      # reusable UI pieces
+├── services/        # logic: model, diagnosis, exports (no UI)
+└── assets/          # static files
+```
 
 ## Notebooks
 

@@ -1,0 +1,16 @@
+# Streamlit reads this when the app is started from the project root:
+#   streamlit run dashboard/app.py
+
+[theme]
+base = "light"
+primaryColor = "#2a78d6"
+backgroundColor = "#fcfcfb"
+secondaryBackgroundColor = "#f3f2ef"
+textColor = "#0b0b0b"
+font = "sans serif"
+
+[server]
+maxUploadSize = 50   # MB, for uploaded driving logs
+
+[browser]
+gatherUsageStats = false
