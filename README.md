@@ -228,7 +228,7 @@ Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; t
 streamlit run dashboard/app.py      # run from the project root
 ```
 
-A Streamlit app with six pages: Overview, Diagnose a trip, Fleet reports, Signal explorer, Model performance and About. It is being built step by step; the navigation and page layout are in place.
+A Streamlit app with six pages: Overview, Diagnose a trip, Fleet reports, Signal explorer, Model performance and About. It is being built step by step: the navigation, page layout and the services behind it (cached model loading, diagnosis of samples and uploads, and report exports as PDF, HTML, JSON, TXT, CSV and ZIP bundles) are in place.
 
 ```
 dashboard/
