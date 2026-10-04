@@ -51,8 +51,9 @@ def trip_figure(logs: pd.DataFrame, scored: pd.DataFrame, report: dict) -> go.Fi
     fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.07,
                         subplot_titles=[title for _, title in panels])
 
+    t0 = logs["time_ms"].min()   # report times are relative to the trip start
     for row, (values, title) in enumerate(panels, start=1):
-        minutes = values.index / 60_000
+        minutes = (values.index - t0) / 60_000
         fig.add_trace(go.Scatter(
             x=minutes, y=values, mode="lines", name=title, line=dict(color=SERIES, width=2),
             hovertemplate=f"{title}: %{{y:.1f}}<extra></extra>", connectgaps=False,

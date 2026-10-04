@@ -76,3 +76,17 @@ def trip_request() -> tuple[DiagnosisRequest, list[str]]:
     if source == "Sample trip":
         return _sample_inputs(), []
     return _upload_inputs()
+
+
+def load_samples_prompt(key: str) -> None:
+    """Shown when no trips are diagnosed yet: offer to load the sample trips in one click."""
+    from dashboard import state
+    from dashboard.services.diagnosis_service import diagnose_all_samples, list_samples
+
+    st.info("No trips diagnosed in this session yet.")
+    if st.button(f"Load the {len(list_samples())} sample trips", type="primary", key=key):
+        with st.spinner("Diagnosing the sample trips..."):
+            for label, result in diagnose_all_samples().items():
+                state.add_trip(label, result)
+        st.rerun()
+    st.page_link("views/diagnose.py", label="Or diagnose your own log", icon=":material/upload_file:")

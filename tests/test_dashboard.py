@@ -76,3 +76,36 @@ def test_diagnose_shows_all_download_buttons():
     at.button(key="diag_run").click().run()
     labels = [b.proto.label for b in at.get("download_button")]
     assert labels == ["Download all formats (ZIP)", "PDF", "HTML", "JSON", "Text", "Readings CSV"]
+
+
+
+def test_diagnose_shows_signal_chart():
+    at = _open_diagnose()
+    at.button(key="diag_run").click().run()
+    assert len(at.get("plotly_chart")) == 1
+
+
+def _open_explorer():
+    at = AppTest.from_file(APP, default_timeout=120).run()
+    return at.switch_page(str(ROOT / "dashboard" / "views" / "signal_explorer.py")).run()
+
+
+def test_explorer_empty_state_loads_samples():
+    at = _open_explorer()
+    assert not at.exception
+    assert at.button(key="explorer_load")
+    at.button(key="explorer_load").click().run()
+    assert not at.exception
+    assert len(at.session_state["diagnosed_trips"]) == 7
+    assert at.selectbox(key="explorer_trip").options[0] == "Normal trip"
+    assert len(at.get("plotly_chart")) == 2   # signals + detector scores
+
+
+def test_explorer_defaults_follow_the_trip():
+    at = _open_explorer()
+    at.button(key="explorer_load").click().run()
+    at.selectbox(key="explorer_trip").set_value("Vacuum leak").run()
+    signals = at.multiselect(key="explorer_signals_Vacuum leak").value
+    assert signals == ["speed_kmh", "engine_rpm", "total_fuel_trim"]
+    at.multiselect(key="explorer_signals_Vacuum leak").set_value([]).run()
+    assert not at.exception and len(at.get("plotly_chart")) == 1   # only detector scores left

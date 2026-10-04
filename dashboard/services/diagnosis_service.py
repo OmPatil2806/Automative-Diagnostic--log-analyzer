@@ -125,3 +125,8 @@ def trip_labels(label: str, results: list[PipelineResult]) -> list[str]:
     if len(results) == 1:
         return [label]
     return [f"{label} · trip {r.report['trip_id']}" for r in results]
+
+
+def diagnose_all_samples() -> dict[str, PipelineResult]:
+    """Every bundled sample trip with its fault codes, keyed by sample label."""
+    return {s.label: diagnose_sample(s.key)[0] for s in list_samples()}

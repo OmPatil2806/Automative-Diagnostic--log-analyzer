@@ -3,10 +3,11 @@
 import streamlit as st
 
 from dashboard import state
+from dashboard.components.charts import trip_overview
 from dashboard.components.downloads import trip_downloads
 from dashboard.components.inputs import trip_request
 from dashboard.components.layout import page_header
-from dashboard.components.report_view import report_view
+from dashboard.components.report_view import report_view, section
 from dashboard.services.diagnosis_service import run_request, trip_labels
 from dashboard.services.model_service import ModelNotFoundError
 
@@ -52,3 +53,9 @@ st.subheader(label)
 with st.container(border=True):
     trip_downloads(result, label, key="diag_dl")
 report_view(result.report)
+
+section("Signals")
+st.caption("Shaded: anomaly periods. Dotted line: fault code set. Hover for exact values; drag to zoom. "
+           "Open the Signal explorer to choose your own signals.")
+st.plotly_chart(trip_overview(result.trip_logs, result.trip_scored, result.report), width="stretch",
+                key="diag_chart")
