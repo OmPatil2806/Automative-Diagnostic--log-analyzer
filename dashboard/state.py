@@ -7,6 +7,7 @@ Overview and Fleet pages can show them together.
 import streamlit as st
 
 _TRIPS = "diagnosed_trips"
+_CURRENT = "current_diagnosis"
 
 
 def get_trips() -> dict:
@@ -20,3 +21,13 @@ def add_trip(name: str, result) -> None:
 
 def clear_trips() -> None:
     st.session_state[_TRIPS] = {}
+
+
+def set_current(labels: list[str]) -> None:
+    """Remember which trips the Diagnose page is showing (survives reruns and page switches)."""
+    st.session_state[_CURRENT] = labels
+
+
+def get_current() -> list[str]:
+    """Labels of the trips last diagnosed on the Diagnose page that are still in the session."""
+    return [label for label in st.session_state.get(_CURRENT, []) if label in get_trips()]

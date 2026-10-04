@@ -21,7 +21,10 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-PAGES = Path(__file__).parent / "pages"
+# Page files live in views/ (not pages/): a folder named pages/ next to the entry
+# script would be picked up by Streamlit's older automatic page discovery and
+# run without this file's setup.
+PAGES = Path(__file__).parent / "views"
 navigation = st.navigation({
     "Diagnosis": [
         st.Page(PAGES / "overview.py", title="Overview", icon=":material/dashboard:", default=True),

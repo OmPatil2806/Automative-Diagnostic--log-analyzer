@@ -85,3 +85,43 @@ def diagnose_upload(
             dtc_path.write_bytes(dtc_file_bytes)
         return run(log_path, dtc_codes=list(dtc_codes), dtc_file=dtc_path,
                    vehicle_id=vehicle_id, detector=load_detector())
+
+
+@dataclass(frozen=True)
+class DiagnosisRequest:
+    """Everything the user chose on the Diagnose page."""
+
+    source: str                         # "sample" or "upload"
+    sample_key: str | None = None
+    include_sample_dtcs: bool = True
+    log_bytes: bytes | None = None
+    log_name: str | None = None
+    dtc_codes: tuple[str, ...] = ()
+    dtc_file_bytes: bytes | None = None
+    vehicle_id: int | None = None
+
+    @property
+    def label(self) -> str:
+        """Display name used for the trip in this session."""
+        if self.source == "sample":
+            return SAMPLE_INFO[self.sample_key][0] if self.sample_key in SAMPLE_INFO else str(self.sample_key)
+        return self.log_name or "Uploaded log"
+
+
+def run_request(request: DiagnosisRequest) -> list[PipelineResult]:
+    """Run a request from the Diagnose page. Raises ValueError with a readable message on bad input."""
+    if request.source == "sample":
+        return diagnose_sample(request.sample_key, request.include_sample_dtcs)
+    if request.source == "upload":
+        if not request.log_bytes:
+            raise ValueError("Upload a driving log CSV first.")
+        return diagnose_upload(request.log_bytes, request.log_name or "uploaded.csv",
+                               request.dtc_codes, request.dtc_file_bytes, request.vehicle_id)
+    raise ValueError(f"Unknown source: {request.source}")
+
+
+def trip_labels(label: str, results: list[PipelineResult]) -> list[str]:
+    """One name per trip: the label itself, or 'label · trip N' when a file holds several trips."""
+    if len(results) == 1:
+        return [label]
+    return [f"{label} · trip {r.report['trip_id']}" for r in results]

@@ -144,3 +144,31 @@ def test_fleet_summary_and_bundle():
 
 def test_timestamped():
     assert es.timestamped("fleet", "zip").startswith("fleet_") and es.timestamped("fleet", "zip").endswith(".zip")
+
+
+# --- requests from the Diagnose page --------------------------------------
+
+def test_run_request_sample_and_label():
+    request = ds.DiagnosisRequest(source="sample", sample_key="misfire")
+    assert request.label == "Engine misfire"
+    assert ds.run_request(request)[0].report["main_finding"]["cause"] == "misfire"
+
+
+def test_run_request_upload():
+    sample = next(s for s in ds.list_samples() if s.key == "rich_injector")
+    request = ds.DiagnosisRequest(source="upload", log_bytes=sample.log_path.read_bytes(),
+                                  log_name="garage_trip.csv", dtc_codes=("P0172",))
+    assert request.label == "garage_trip.csv"
+    assert ds.run_request(request)[0].report["dtcs"][0]["code"] == "P0172"
+
+
+def test_run_request_upload_without_file():
+    with pytest.raises(ValueError, match="Upload a driving log"):
+        ds.run_request(ds.DiagnosisRequest(source="upload"))
+
+
+def test_trip_labels_for_multi_trip_file():
+    results = ds.diagnose_sample("normal_trip")
+    assert ds.trip_labels("Normal trip", results) == ["Normal trip"]
+    two = results + results
+    assert ds.trip_labels("log.csv", two) == [f"log.csv · trip {results[0].report['trip_id']}"] * 2
