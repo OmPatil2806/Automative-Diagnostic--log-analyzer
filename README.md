@@ -68,12 +68,13 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 
 - [x] **Step 1:** download, load and clean VED logs
 - [x] **Step 2:** DTC reference table and decoder
-- [ ] **MVP:** show basic charts
 - [x] **Step 3:** synthetic fault generator
 - [x] **Step 4:** ML anomaly detection
 - [x] **Step 5:** fault correlation, root cause and vehicle health score
-- [x] **Step 6:** diagnosis report and end-to-end pipeline
-- [ ] **Step 7:** dashboard (in progress: navigation and page skeleton done)
+- [x] **Step 6:** diagnosis report and end-to-end pipeline (text/JSON/HTML/PDF)
+- [ ] **Step 7:** dashboard — in progress: **Diagnose a trip** and **Signal explorer** work end to end; Overview, Fleet reports, Model performance and About are still placeholder pages
+
+186 tests pass (`pytest`).
 
 ## Quick start: diagnose a trip
 
@@ -228,7 +229,11 @@ Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; t
 streamlit run dashboard/app.py      # run from the project root
 ```
 
-A Streamlit app with six pages: Overview, Diagnose a trip, Fleet reports, Signal explorer, Model performance and About. It is being built step by step. **Diagnose a trip** works: pick a sample or upload a CSV, add fault codes (typed or as a file) and get the full report, downloadable as PDF, HTML, JSON, text, readings CSV or all of them in one ZIP, with an interactive signal chart. **Signal explorer** works: plot any signal of a diagnosed trip, zoom into a time range, and see each detector's score over time. Also in place: the navigation, page layout and the services behind it (cached model loading, diagnosis of samples and uploads, and report exports as PDF, HTML, JSON, TXT, CSV and ZIP bundles) are in place.
+A Streamlit app with six pages, grouped in the sidebar as Diagnosis (Overview, Diagnose a trip, Fleet reports), Analysis (Signal explorer, Model performance) and Help (About). Being built page by page:
+
+- **Diagnose a trip** (done): pick a sample or upload a CSV, add fault codes (typed or as a file) and get the full report, with an interactive signal chart and downloads as PDF, HTML, JSON, text, scored readings CSV, or all of them in one ZIP.
+- **Signal explorer** (done): plot any signal of a trip diagnosed this session, zoom into a time range, and see which detector raised the alarm.
+- **Overview, Fleet reports, Model performance, About**: page skeleton only (`coming_soon` placeholder) — navigation, theme and the services behind them (cached model loading, sample/upload diagnosis, PDF/HTML/JSON/TXT/CSV/ZIP export, fleet ZIP export) are already built, the page content is not wired up yet.
 
 ```
 dashboard/
@@ -262,7 +267,7 @@ the fuel-system detector saw relatively little fuel-trim data. Training on more 
 
 ## Tech stack
 
-Python · pandas · scikit-learn · Plotly · Streamlit · pytest
+Python · pandas · scikit-learn · Plotly · Streamlit · ReportLab (PDF) · matplotlib · pytest
 
 ## License
 
