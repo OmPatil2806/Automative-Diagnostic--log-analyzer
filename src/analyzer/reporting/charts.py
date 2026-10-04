@@ -28,7 +28,7 @@ MAIN_SIGNAL = {
 }
 
 
-def _main_signal(group: str | None, logs: pd.DataFrame, scored: pd.DataFrame) -> tuple[pd.Series, str]:
+def main_signal(group: str | None, logs: pd.DataFrame, scored: pd.DataFrame) -> tuple[pd.Series, str]:
     logs = logs.assign(total_fuel_trim=logs["stft_b1_pct"] + logs["ltft_b1_pct"])
     source, column, title = MAIN_SIGNAL.get(group, ("logs", "engine_rpm", "Engine RPM"))
     frame = logs if source == "logs" else scored
@@ -41,7 +41,7 @@ def _main_signal(group: str | None, logs: pd.DataFrame, scored: pd.DataFrame) ->
 def trip_figure(logs: pd.DataFrame, scored: pd.DataFrame, report: dict) -> go.Figure:
     main = report.get("main_finding")
     group = main["subsystem_key"] if main else None
-    signal, signal_title = _main_signal(group, logs, scored)
+    signal, signal_title = main_signal(group, logs, scored)
 
     panels = [
         (logs.set_index("time_ms")["speed_kmh"], "Speed (km/h)"),

@@ -11,7 +11,8 @@ maf_gs, absolute_load_pct, stft_b1_pct, ltft_b1_pct, hv_battery_voltage_v,
 hv_battery_current_a, hv_battery_soc_pct (optional). Raw VED column names
 also work.
 
-Writes <name>_report.txt / .json / .html to reports/ (or --out).
+Writes <name>_report.txt / .json / .html / .pdf to reports/ (or --out).
+Choose formats with --format, e.g. --format pdf html.
 """
 
 import argparse
@@ -35,7 +36,8 @@ def main() -> None:
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH, help="trained model file")
     parser.add_argument("--out", type=Path, default=REPORTS_DIR, help="output folder")
     parser.add_argument("--offline", action="store_true", help="embed the chart library in the HTML (no internet needed)")
-    parser.add_argument("--format", nargs="+", choices=["txt", "json", "html"], default=["txt", "json", "html"])
+    parser.add_argument("--format", nargs="+", choices=["txt", "json", "html", "pdf"],
+                        default=["txt", "json", "html", "pdf"])
     args = parser.parse_args()
 
     try:
@@ -59,6 +61,9 @@ def main() -> None:
         if "html" in args.format:
             (args.out / f"{name}_report.html").write_text(result.html, encoding="utf-8")
             written.append("html")
+        if "pdf" in args.format:
+            (args.out / f"{name}_report.pdf").write_bytes(result.pdf())
+            written.append("pdf")
         print(f"Saved {args.out / name}_report.{{{','.join(written)}}}\n")
 
 

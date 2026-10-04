@@ -16,6 +16,7 @@ from analyzer.detection.anomaly import AnomalyDetector
 from analyzer.dtc.decoder import is_valid_code, normalize_code, parse_obd_response
 from analyzer.ingestion.cleaner import clean_trip_log
 from analyzer.ingestion.loader import load_trip_log
+from analyzer.reporting.pdf_report import render_pdf
 from analyzer.reporting.report import build_report, render_html, render_text
 
 DEFAULT_MODEL_PATH = MODELS_DIR / "anomaly_detector.joblib"
@@ -26,9 +27,15 @@ DTC_COLUMNS = ["vehicle_id", "trip_id", "time_ms", "code", "time_known"]
 @dataclass
 class PipelineResult:
     diagnosis: TripDiagnosis
-    report: dict          # JSON-ready
+    report: dict              # JSON-ready
     text: str
     html: str
+    trip_logs: pd.DataFrame   # cleaned readings of this trip
+    trip_scored: pd.DataFrame # detector scores per reading
+
+    def pdf(self) -> bytes:
+        """The report as a PDF (built on request, since it takes a moment to draw)."""
+        return render_pdf(self.report, self.trip_logs, self.trip_scored)
 
 
 def collect_dtcs(
@@ -104,5 +111,7 @@ def run(
             report=report,
             text=render_text(report),
             html=render_html(report, trip_logs, trip_scored, offline=offline_html),
+            trip_logs=trip_logs,
+            trip_scored=trip_scored,
         ))
     return results

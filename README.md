@@ -53,7 +53,7 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 │   ├── features/           # engineering.py
 │   ├── detection/          # anomaly.py
 │   ├── analysis/           # correlation.py, health_score.py
-│   └── reporting/          # report.py, charts.py
+│   └── reporting/          # report.py (text/JSON/HTML), pdf_report.py, charts.py
 ├── scripts/                # download_ved, prepare_ved, generate_synthetic, train_model,
 │                           # evaluate_analysis, make_samples, run_pipeline
 ├── dashboard/              # Streamlit app (see Dashboard below)
@@ -113,7 +113,7 @@ python scripts/run_pipeline.py --log data/samples/vacuum_leak.csv --dtc-file dat
   3. Smoke-test the intake for leaks
 ```
 
-It also writes `reports/vacuum_leak_report.json` and `reports/vacuum_leak_report.html` (with signal charts; add `--offline` to embed the chart library for viewing without internet).
+It also writes the report to `reports/` as **PDF**, HTML (interactive signal charts; add `--offline` to embed the chart library for viewing without internet), JSON and text. Pick formats with `--format`, e.g. `--format pdf html`.
 
 ### Input
 
