@@ -9,4 +9,4 @@ def page_header(title: str, description: str) -> None:
 
 
 def coming_soon(what: str) -> None:
-    st.info(f"{what} is being built and will appear here in an upcoming step.", icon="🛠️")
+    st.info(f"{what} is being built and will appear here in an upcoming step.")

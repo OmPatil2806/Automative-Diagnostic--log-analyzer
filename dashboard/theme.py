@@ -1,7 +1,7 @@
 """Colors and styles used across the dashboard (one place, so pages stay consistent).
 
 Matches the HTML/PDF reports: one blue for data series, status colors only for
-health status, always shown together with an icon and a label.
+health status, always shown together with a text label (never color alone).
 """
 
 # Surfaces and text
@@ -17,11 +17,11 @@ GRID = "#e8e7e3"
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"]
 BLUE = SERIES[0]
 
-# Health status: color + icon + label
+# Health status: color + label
 STATUS = {
-    "good": {"color": "#0ca30c", "icon": "✓", "label": "Good"},
-    "needs attention": {"color": "#fab219", "icon": "⚠", "label": "Needs attention"},
-    "critical": {"color": "#d03b3b", "icon": "✗", "label": "Critical"},
+    "good": {"color": "#0ca30c", "label": "Good"},
+    "needs attention": {"color": "#fab219", "label": "Needs attention"},
+    "critical": {"color": "#d03b3b", "label": "Critical"},
 }
 
 # Fault code severity

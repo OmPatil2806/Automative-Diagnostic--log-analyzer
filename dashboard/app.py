@@ -16,7 +16,7 @@ import streamlit as st  # noqa: E402
 
 st.set_page_config(
     page_title="Automotive Diagnostic Log Analyzer",
-    page_icon="🚗",
+    page_icon=":material/directions_car:",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -38,7 +38,7 @@ navigation = st.navigation({
 })
 
 with st.sidebar:
-    st.markdown("### 🚗 Diagnostic Log Analyzer")
+    st.markdown("### Diagnostic Log Analyzer")
     st.caption("Finds vehicle faults in OBD-II driving logs, explains the likely cause, and scores vehicle health.")
 
 navigation.run()
