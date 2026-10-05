@@ -35,14 +35,27 @@ def fmt_time(seconds: float | None) -> str:
     return f"{seconds // 60}:{seconds % 60:02d}"
 
 
-def _checks_run(scored: pd.DataFrame, detector) -> dict[str, str]:
+# raw signals each detector needs (to tell "signal missing" from "log too short")
+GROUP_SIGNALS = {
+    "engine": ["engine_rpm", "speed_kmh"],
+    "speed": ["speed_kmh", "engine_rpm"],
+    "fuel": ["stft_b1_pct", "ltft_b1_pct"],
+    "air": ["maf_gs", "absolute_load_pct", "engine_rpm"],
+    "battery": ["hv_battery_voltage_v", "hv_battery_current_a", "hv_battery_soc_pct"],
+}
+
+
+def _checks_run(scored: pd.DataFrame, detector, trip_logs: pd.DataFrame | None = None) -> dict[str, str]:
     checks = {}
     for group in FEATURE_GROUPS:
         column = f"score_{group}"
         if group not in detector.models:
             checks[group] = "not available (no trained model)"
         elif column not in scored or scored[column].notna().mean() < MIN_CHECK_COVERAGE:
-            checks[group] = "not checked (signals missing in this log)"
+            has_signals = trip_logs is not None and all(
+                c in trip_logs and trip_logs[c].notna().any() for c in GROUP_SIGNALS.get(group, []))
+            checks[group] = ("not checked (too few readings; needs about a minute of driving)" if has_signals
+                             else "not checked (signals missing in this log)")
         else:
             checks[group] = "checked"
     return checks
@@ -140,7 +153,7 @@ def build_report(
         "main_finding": main,
         "recommended_checks": recommended,
         "other_possible_causes": dtc_causes,
-        "checks_run": {SUBSYSTEMS[g]: v for g, v in _checks_run(trip_scored, detector).items()},
+        "checks_run": {SUBSYSTEMS[g]: v for g, v in _checks_run(trip_scored, detector, trip_logs).items()},
         "notes": notes,
     }
 

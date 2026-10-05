@@ -155,3 +155,19 @@ def test_offline_html_embeds_plotly(rich_log, detector):
 @pytest.mark.parametrize("seconds, expected", [(0, "0:00"), (65.4, "1:05"), (600, "10:00"), (None, "-")])
 def test_fmt_time(seconds, expected):
     assert fmt_time(seconds) == expected
+
+
+def test_load_trip_log_with_empty_id_columns(tmp_path):
+    path = tmp_path / "blank_ids.csv"
+    pd.DataFrame({"time_ms": [0, 1000], "speed_kmh": [10, 12], "engine_rpm": [900, 950],
+                  "vehicle_id": [None, None], "trip_id": [None, None]}).to_csv(path, index=False)
+    df = clean_trip_log(load_trip_log(path))
+    assert len(df) == 2
+    assert (df["vehicle_id"] == -1).all() and (df["trip_id"] == 1).all()
+
+
+def test_short_log_says_too_few_readings(tmp_path, detector):
+    path = tmp_path / "short.csv"
+    make_trip(1, 1, n=8)[LOG_COLUMNS].to_csv(path, index=False)
+    checks = run(path, detector=detector)[0].report["checks_run"]
+    assert checks["Engine (RPM stability)"].startswith("not checked (too few readings")

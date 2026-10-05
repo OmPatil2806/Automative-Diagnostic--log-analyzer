@@ -105,8 +105,9 @@ def load_trip_log(path: Path, vehicle_id: int | None = None) -> pd.DataFrame:
         df["vehicle_id"] = vehicle_id
     elif "vehicle_id" not in df:
         df["vehicle_id"] = -1
-    if "trip_id" not in df:
-        df["trip_id"] = 1
+    else:
+        df["vehicle_id"] = df["vehicle_id"].fillna(-1)   # empty cells = unknown vehicle, not a bad row
+    df["trip_id"] = df["trip_id"].fillna(1) if "trip_id" in df else 1
     for column in OPTIONAL_LOG_COLUMNS:
         if column not in df:
             df[column] = float("nan")
