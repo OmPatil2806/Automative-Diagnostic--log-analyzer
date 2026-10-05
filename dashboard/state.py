@@ -8,6 +8,7 @@ import streamlit as st
 
 _TRIPS = "diagnosed_trips"
 _CURRENT = "current_diagnosis"
+_FLEET = "fleet_selection"
 
 
 def get_trips() -> dict:
@@ -31,3 +32,14 @@ def set_current(labels: list[str]) -> None:
 def get_current() -> list[str]:
     """Labels of the trips last diagnosed on the Diagnose page that are still in the session."""
     return [label for label in st.session_state.get(_CURRENT, []) if label in get_trips()]
+
+
+def set_fleet(labels: list[str]) -> None:
+    """Remember which trips the Fleet reports page last diagnosed."""
+    st.session_state[_FLEET] = labels
+
+
+def get_fleet() -> dict:
+    """The Fleet reports page's trips that are still in the session, in order."""
+    trips = get_trips()
+    return {label: trips[label] for label in st.session_state.get(_FLEET, []) if label in trips}

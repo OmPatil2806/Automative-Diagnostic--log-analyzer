@@ -97,6 +97,7 @@ def checks_run(report: dict) -> None:
 
 def section(title: str) -> None:
     """Section heading sized between body text and the page title."""
+    inject_styles()
     st.markdown(f'<div class="dla-section">{e(title)}</div>', unsafe_allow_html=True)
 
 

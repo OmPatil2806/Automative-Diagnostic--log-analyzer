@@ -172,3 +172,44 @@ def test_trip_labels_for_multi_trip_file():
     assert ds.trip_labels("Normal trip", results) == ["Normal trip"]
     two = results + results
     assert ds.trip_labels("log.csv", two) == [f"log.csv · trip {results[0].report['trip_id']}"] * 2
+
+
+# --- batch (Fleet reports) ------------------------------------------------
+
+def _sample_files(*keys, with_codes=True):
+    files = []
+    for s in ds.list_samples():
+        if s.key in keys:
+            files.append((f"{s.key}.csv", s.log_path.read_bytes()))
+            if with_codes and s.dtc_path:
+                files.append((f"{s.key}_dtc.csv", s.dtc_path.read_bytes()))
+    return files
+
+
+def test_pair_uploads_matches_by_name():
+    files = [("a.csv", b"1"), ("A_dtc.csv", b"2"), ("b.csv", b"3"), ("orphan_dtc.csv", b"4")]
+    pairs, unmatched = ds.pair_uploads(files)
+    assert pairs == [("a.csv", b"1", b"2"), ("b.csv", b"3", None)]
+    assert unmatched == ["orphan_dtc.csv"]
+
+
+def test_diagnose_batch_with_codes_and_a_bad_file():
+    files = _sample_files("vacuum_leak", "misfire") + [("broken.csv", b"x,y\n1,2\n"), ("lost_dtc.csv", b"code,time_ms\n")]
+    results, errors = ds.diagnose_batch(files)
+    assert set(results) == {"vacuum_leak.csv", "misfire.csv"}
+    assert results["vacuum_leak.csv"].report["dtcs"][0]["code"] == "P0171"
+    assert results["misfire.csv"].report["main_finding"]["cause"] == "misfire"
+    assert errors["broken.csv"] == "Missing required columns: time_ms, speed_kmh, engine_rpm"
+    assert errors["lost_dtc.csv"] == "No driving log with a matching name"
+
+
+def test_diagnose_batch_without_code_files():
+    results, errors = ds.diagnose_batch(_sample_files("rich_injector", with_codes=False))
+    assert not errors
+    assert results["rich_injector.csv"].report["dtcs"] == []
+
+
+def test_diagnose_samples():
+    results = ds.diagnose_samples(["normal_trip", "maf_drift"], include_dtcs=False)
+    assert list(results) == ["Normal trip", "Dirty MAF sensor"]
+    assert results["Dirty MAF sensor"].report["dtcs"] == []

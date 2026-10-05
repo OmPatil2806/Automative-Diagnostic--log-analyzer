@@ -130,3 +130,49 @@ def trip_labels(label: str, results: list[PipelineResult]) -> list[str]:
 def diagnose_all_samples() -> dict[str, PipelineResult]:
     """Every bundled sample trip with its fault codes, keyed by sample label."""
     return {s.label: diagnose_sample(s.key)[0] for s in list_samples()}
+
+
+DTC_SUFFIX = "_dtc.csv"
+
+
+def pair_uploads(files: list[tuple[str, bytes]]) -> tuple[list[tuple[str, bytes, bytes | None]], list[str]]:
+    """Match logs with their fault-code files by name: trip.csv <-> trip_dtc.csv.
+
+    Returns (log name, log bytes, codes bytes or None) per log, and the names of
+    code files that have no matching log.
+    """
+    logs = {n: b for n, b in files if not n.lower().endswith(DTC_SUFFIX)}
+    codes = {n[: -len(DTC_SUFFIX)].lower(): b for n, b in files if n.lower().endswith(DTC_SUFFIX)}
+    pairs = [(name, data, codes.pop(Path(name).stem.lower(), None)) for name, data in logs.items()]
+    unmatched = [n for n, _ in files if n.lower().endswith(DTC_SUFFIX) and n[: -len(DTC_SUFFIX)].lower() in codes]
+    return pairs, unmatched
+
+
+def short_error(file_name: str, message: str) -> str:
+    """Trim pipeline errors for display: drop the repeated file name and the column reference list."""
+    message = message.removeprefix(f"{file_name} ").removeprefix("is ").split(". Required:")[0]
+    message = message.replace("[", "").replace("]", "").replace("'", "")
+    return message[:1].upper() + message[1:]
+
+
+def diagnose_batch(files: list[tuple[str, bytes]]) -> tuple[dict[str, PipelineResult], dict[str, str]]:
+    """Diagnose many uploaded files. A bad file is reported, not fatal.
+
+    Returns ({trip label: result}, {file name: error message}).
+    """
+    pairs, unmatched = pair_uploads(files)
+    results, errors = {}, {name: "No driving log with a matching name" for name in unmatched}
+    for name, log_bytes, dtc_bytes in pairs:
+        try:
+            trips = diagnose_upload(log_bytes, name, dtc_file_bytes=dtc_bytes)
+        except (ValueError, KeyError) as error:
+            errors[name] = short_error(name, str(error))
+            continue
+        results.update(zip(trip_labels(name, trips), trips))
+    return results, errors
+
+
+def diagnose_samples(keys: list[str], include_dtcs: bool = True) -> dict[str, PipelineResult]:
+    """Chosen sample trips, keyed by sample label."""
+    by_key = {s.key: s for s in list_samples()}
+    return {by_key[k].label: diagnose_sample(k, include_dtcs)[0] for k in keys}

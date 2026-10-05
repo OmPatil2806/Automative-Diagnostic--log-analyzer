@@ -109,3 +109,38 @@ def test_explorer_defaults_follow_the_trip():
     assert signals == ["speed_kmh", "engine_rpm", "total_fuel_trim"]
     at.multiselect(key="explorer_signals_Vacuum leak").set_value([]).run()
     assert not at.exception and len(at.get("plotly_chart")) == 1   # only detector scores left
+
+
+def _open_fleet():
+    at = AppTest.from_file(APP, default_timeout=180).run()
+    return at.switch_page(str(ROOT / "dashboard" / "views" / "fleet_reports.py")).run()
+
+
+def test_fleet_diagnoses_all_samples():
+    at = _open_fleet()
+    assert len(at.multiselect(key="fleet_samples").value) == 7
+    at.button(key="fleet_run").click().run()
+    assert not at.exception
+    assert [m.label for m in at.metric][:2] == ["Trips", "Average score"]
+    assert at.metric[0].value == "7"
+    table = at.dataframe[0].value
+    assert len(table) == 7 and table["health_score"].is_monotonic_increasing
+    labels = [b.proto.label for b in at.get("download_button")]
+    assert labels == ["Download all 7 reports (ZIP)", "Download summary (CSV)"]
+    assert len(at.session_state["diagnosed_trips"]) == 7
+
+
+def test_fleet_subset_and_session_source():
+    at = _open_fleet()
+    at.multiselect(key="fleet_samples").set_value(["normal_trip", "misfire"])
+    at.button(key="fleet_run").click().run()
+    assert at.metric[0].value == "2"
+    at.segmented_control(key="fleet_source").set_value("Trips in this session").run()
+    at.button(key="fleet_run").click().run()
+    assert not at.exception and at.metric[0].value == "2"
+
+
+def test_fleet_upload_waits_for_files():
+    at = _open_fleet()
+    at.segmented_control(key="fleet_source").set_value("Upload CSV files").run()
+    assert at.button(key="fleet_run").disabled
