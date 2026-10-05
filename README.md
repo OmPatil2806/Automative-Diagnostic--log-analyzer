@@ -72,9 +72,9 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 - [x] **Step 4:** ML anomaly detection
 - [x] **Step 5:** fault correlation, root cause and vehicle health score
 - [x] **Step 6:** diagnosis report and end-to-end pipeline (text/JSON/HTML/PDF)
-- [ ] **Step 7:** dashboard — in progress: **Diagnose a trip**, **Signal explorer** and **Fleet reports** and **Overview** work end to end; Model performance and About are still placeholder pages
+- [ ] **Step 7:** dashboard — in progress: **Diagnose a trip**, **Signal explorer** and **Fleet reports** **Overview** and **Data exploration** work end to end; Model performance and About are still placeholder pages
 
-198 tests pass (`pytest`).
+203 tests pass (`pytest`).
 
 ## Quick start: diagnose a trip
 
@@ -229,12 +229,13 @@ Every synthetic faulty trip sets a DTC, so flagging faulty trips is easy here; t
 streamlit run dashboard/app.py      # run from the project root
 ```
 
-A Streamlit app with six pages, grouped in the sidebar as Diagnosis (Overview, Diagnose a trip, Fleet reports), Analysis (Signal explorer, Model performance) and Help (About). Being built page by page:
+A Streamlit app with six pages, grouped in the sidebar as Diagnosis (Overview, Diagnose a trip, Fleet reports), Analysis (Signal explorer, Data exploration, Model performance) and Help (About). Being built page by page:
 
 - **Diagnose a trip** (done): pick a sample or upload a CSV, add fault codes (typed or as a file) and get the full report, with an interactive signal chart and downloads as PDF, HTML, JSON, text, scored readings CSV, or all of them in one ZIP.
 - **Signal explorer** (done): plot any signal of a trip diagnosed this session, zoom into a time range, and see which detector raised the alarm.
 - **Fleet reports** (done): diagnose many trips at once (samples, several uploaded CSVs with fault-code files matched by name, or every trip in the session), compare them in one table, and download a ZIP with every trip's reports plus a summary CSV.
 - **Overview** (done): the home page: tiles (trips, vehicles, average score, trips needing attention, early warnings), charts of trips by status, health score per trip and likely causes, and a table of every trip in the session; one click loads the sample trips when the session is empty.
+- **Data exploration** (done): the EDA of notebook 1, interactive: fleet and trips, which signals each vehicle type records (and the week-1 logging change), signal distributions, per-vehicle differences, airflow and battery relationships, data quality and the findings behind the design. It reads `dashboard/assets/eda_summary.json` (53 KB, committed), so it works without the raw data; regenerate it with `python scripts/export_eda_summary.py`.
 - **Model performance, About**: page skeleton only (`coming_soon` placeholder) — navigation, theme and the services behind them (cached model loading, sample/upload diagnosis, PDF/HTML/JSON/TXT/CSV/ZIP export, fleet ZIP export) are already built, the page content is not wired up yet.
 
 ```

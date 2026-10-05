@@ -118,3 +118,12 @@ def report_view(report: dict) -> None:
         recommended_checks(report)
         section("Checks run")
         checks_run(report)
+
+
+def html_table(rows: list[dict], columns: dict[str, str]) -> None:
+    """A light table whose cells wrap long text (columns: key -> header)."""
+    inject_styles()
+    head = "".join(f"<th>{e(h)}</th>" for h in columns.values())
+    body = "".join("<tr>" + "".join(f"<td>{e(str(r[k]))}</td>" for k in columns) + "</tr>" for r in rows)
+    st.markdown(f"<table class='dla-table'><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>",
+                unsafe_allow_html=True)

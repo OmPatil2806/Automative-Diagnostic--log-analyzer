@@ -33,6 +33,7 @@ navigation = st.navigation({
     ],
     "Analysis": [
         st.Page(PAGES / "signal_explorer.py", title="Signal explorer", icon=":material/monitoring:"),
+        st.Page(PAGES / "data_exploration.py", title="Data exploration", icon=":material/dataset:"),
         st.Page(PAGES / "model_performance.py", title="Model performance", icon=":material/insights:"),
     ],
     "Help": [
