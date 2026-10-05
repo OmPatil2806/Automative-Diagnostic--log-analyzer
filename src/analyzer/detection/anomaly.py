@@ -76,12 +76,16 @@ class AnomalyDetector:
             raise ValueError("Not enough normal data to train any detector.")
         return self
 
-    def score(self, logs: pd.DataFrame) -> pd.DataFrame:
+    def score(self, logs: pd.DataFrame, method: str = "combined") -> pd.DataFrame:
         """Score every row.
 
         Returns keys, the feature values (used later as evidence), per-group
-        scores, overall score, suspect group and alarm.
+        scores, overall score, suspect group and alarm. `method` picks the group
+        score: "combined" (default, the higher of the two), or "forest" / "range"
+        alone, used to measure what each part contributes.
         """
+        if method not in ("combined", "forest", "range"):
+            raise ValueError(f"Unknown scoring method: {method}")
         features = build_features(logs, self.baseline)
         out = features.copy()
         for group, model in self.models.items():
@@ -90,7 +94,8 @@ class AnomalyDetector:
             scores = pd.Series(np.nan, index=features.index)
             if len(X):
                 forest = -model.score_samples(X) / self.thresholds[group]
-                scores[X.index] = np.maximum(forest, self._range_score(X, self.ranges[group]))
+                range_ = self._range_score(X, self.ranges[group])
+                scores[X.index] = {"combined": np.maximum(forest, range_), "forest": forest, "range": range_}[method]
             out[f"score_{group}"] = scores
 
         score_cols = [f"score_{g}" for g in self.models]

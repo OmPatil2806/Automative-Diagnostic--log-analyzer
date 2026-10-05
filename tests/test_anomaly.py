@@ -184,3 +184,16 @@ def test_row_metrics():
     m = row_metrics(scored, logs)
     # ramp-up row (0.5) excluded: TP=1, FN=1, FP=1
     assert m == pytest.approx({"precision": 0.5, "recall": 0.5, "f1": 0.5})
+
+
+def test_score_methods(detector):
+    trip, _ = faulty_trip("rich_injector")
+    combined = detector.score(trip)
+    forest = detector.score(trip, method="forest")
+    range_only = detector.score(trip, method="range")
+    for group in ("fuel", "engine"):
+        col = f"score_{group}"
+        both = pd.concat([forest[col], range_only[col]], axis=1).max(axis=1)
+        assert np.allclose(combined[col].dropna(), both.dropna())
+    with pytest.raises(ValueError):
+        detector.score(trip, method="magic")

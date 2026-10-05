@@ -72,9 +72,9 @@ A small DTC reference table (`data/reference/`) is used for decoding fault codes
 - [x] **Step 4:** ML anomaly detection
 - [x] **Step 5:** fault correlation, root cause and vehicle health score
 - [x] **Step 6:** diagnosis report and end-to-end pipeline (text/JSON/HTML/PDF)
-- [ ] **Step 7:** dashboard — in progress: **Diagnose a trip**, **Signal explorer** and **Fleet reports** **Overview** and **Data exploration** work end to end; Model performance and About are still placeholder pages
+- [ ] **Step 7:** dashboard — in progress: **Diagnose a trip**, **Signal explorer** and **Fleet reports** **Overview**, **Data exploration** and **Model performance** work end to end; About is still a placeholder page
 
-203 tests pass (`pytest`).
+207 tests pass (`pytest`).
 
 ## Quick start: diagnose a trip
 
@@ -236,7 +236,8 @@ A Streamlit app with six pages, grouped in the sidebar as Diagnosis (Overview, D
 - **Fleet reports** (done): diagnose many trips at once (samples, several uploaded CSVs with fault-code files matched by name, or every trip in the session), compare them in one table, and download a ZIP with every trip's reports plus a summary CSV.
 - **Overview** (done): the home page: tiles (trips, vehicles, average score, trips needing attention, early warnings), charts of trips by status, health score per trip and likely causes, and a table of every trip in the session; one click loads the sample trips when the session is empty.
 - **Data exploration** (done): the EDA of notebook 1, interactive: fleet and trips, which signals each vehicle type records (and the week-1 logging change), signal distributions, per-vehicle differences, airflow and battery relationships, data quality and the findings behind the design. It reads `dashboard/assets/eda_summary.json` (53 KB, committed), so it works without the raw data; regenerate it with `python scripts/export_eda_summary.py`.
-- **Model performance, About**: page skeleton only (`coming_soon` placeholder) — navigation, theme and the services behind them (cached model loading, sample/upload diagnosis, PDF/HTML/JSON/TXT/CSV/ZIP export, fleet ZIP export) are already built, the page content is not wired up yet.
+- **Model performance** (done): detection and early-warning rate per fault, warning time per trip, Isolation Forest vs range score vs combined (F1 0.61 / 0.86 / 0.87), the alarm-rule trade-off, root-cause accuracy and health score results, and the model's limitations. It reads `dashboard/assets/model_metrics.json` (5 KB, committed); regenerate it with `python scripts/export_metrics.py`.
+- **About**: page skeleton only (`coming_soon` placeholder) — navigation, theme and the services behind them (cached model loading, sample/upload diagnosis, PDF/HTML/JSON/TXT/CSV/ZIP export, fleet ZIP export) are already built, the page content is not wired up yet.
 
 ```
 dashboard/

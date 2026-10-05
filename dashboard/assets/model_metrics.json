@@ -1,0 +1,304 @@
+{
+ "generated": "2026-10-05",
+ "model": {
+  "detectors": [
+   "engine",
+   "speed",
+   "fuel",
+   "air",
+   "battery"
+  ],
+  "alarm_rule": {
+   "window": 30,
+   "ratio": 0.7
+  },
+  "vehicles_with_baseline": 161
+ },
+ "dataset": {
+  "trips": 240,
+  "normal_trips": 120,
+  "faulty_trips": 120,
+  "readings": 138543,
+  "training_trips": 609
+ },
+ "methods": {
+  "forest": {
+   "precision": 0.911,
+   "recall": 0.462,
+   "f1": 0.613,
+   "false_alarm_rate": 0.058,
+   "detection_rate": {
+    "vacuum_leak": 0.05,
+    "maf_drift": 0.2,
+    "rich_injector": 0.75,
+    "misfire": 0.5,
+    "speed_sensor_failure": 0.85,
+    "hv_battery_degradation": 0.75
+   }
+  },
+  "range": {
+   "precision": 0.932,
+   "recall": 0.804,
+   "f1": 0.863,
+   "false_alarm_rate": 0.067,
+   "detection_rate": {
+    "vacuum_leak": 0.95,
+    "maf_drift": 1.0,
+    "rich_injector": 0.95,
+    "misfire": 0.8,
+    "speed_sensor_failure": 0.9,
+    "hv_battery_degradation": 0.8
+   }
+  },
+  "combined": {
+   "precision": 0.927,
+   "recall": 0.815,
+   "f1": 0.868,
+   "false_alarm_rate": 0.075,
+   "detection_rate": {
+    "vacuum_leak": 0.95,
+    "maf_drift": 1.0,
+    "rich_injector": 0.95,
+    "misfire": 0.8,
+    "speed_sensor_failure": 0.9,
+    "hv_battery_degradation": 0.8
+   }
+  }
+ },
+ "per_fault": [
+  {
+   "fault": "vacuum_leak",
+   "trips": 20,
+   "detected": 0.95,
+   "before_dtc": 0.45,
+   "median_warning_s": -2.6,
+   "suspect_group": "fuel",
+   "root_cause_accuracy": 0.842
+  },
+  {
+   "fault": "maf_drift",
+   "trips": 20,
+   "detected": 1.0,
+   "before_dtc": 0.6,
+   "median_warning_s": 11.2,
+   "suspect_group": "fuel",
+   "root_cause_accuracy": 0.647
+  },
+  {
+   "fault": "rich_injector",
+   "trips": 20,
+   "detected": 0.95,
+   "before_dtc": 0.25,
+   "median_warning_s": -20.8,
+   "suspect_group": "fuel",
+   "root_cause_accuracy": 0.944
+  },
+  {
+   "fault": "misfire",
+   "trips": 20,
+   "detected": 0.8,
+   "before_dtc": 0.2,
+   "median_warning_s": -20.45,
+   "suspect_group": "engine",
+   "root_cause_accuracy": 1.0
+  },
+  {
+   "fault": "speed_sensor_failure",
+   "trips": 20,
+   "detected": 0.9,
+   "before_dtc": 0.5,
+   "median_warning_s": 8.85,
+   "suspect_group": "speed",
+   "root_cause_accuracy": 0.944
+  },
+  {
+   "fault": "hv_battery_degradation",
+   "trips": 20,
+   "detected": 0.8,
+   "before_dtc": 0.55,
+   "median_warning_s": 47.75,
+   "suspect_group": "battery",
+   "root_cause_accuracy": 0.875
+  }
+ ],
+ "warning_times": {
+  "vacuum_leak": [
+   -3.0,
+   -30.1,
+   -24.9,
+   22.2,
+   -16.6,
+   -4.1,
+   27.8,
+   124.7,
+   17.0,
+   -8.1,
+   16.7,
+   63.4,
+   -29.6,
+   72.0,
+   91.9,
+   -2.6,
+   11.2,
+   -2.7,
+   -4.6
+  ],
+  "maf_drift": [
+   359.2,
+   36.6,
+   -11.1,
+   -3.0,
+   -38.5,
+   10.4,
+   3.1,
+   46.5,
+   -71.6,
+   39.8,
+   -15.4,
+   -22.8,
+   -30.4,
+   165.1,
+   12.0,
+   -18.3,
+   36.4,
+   78.6,
+   106.7,
+   157.5
+  ],
+  "rich_injector": [
+   -21.7,
+   23.6,
+   -11.7,
+   -20.8,
+   -35.6,
+   -28.7,
+   11.8,
+   -54.2,
+   -9.4,
+   -21.4,
+   -26.0,
+   -4.3,
+   -32.3,
+   -48.2,
+   28.4,
+   -28.6,
+   60.3,
+   -1.8,
+   852.2
+  ],
+  "misfire": [
+   -176.1,
+   0.0,
+   15.1,
+   -109.0,
+   87.4,
+   -21.2,
+   0.0,
+   -38.5,
+   -24.7,
+   -10.3,
+   112.9,
+   -19.7,
+   -82.1,
+   -71.0,
+   -109.8,
+   61.5
+  ],
+  "speed_sensor_failure": [
+   -6.3,
+   -26.3,
+   34.8,
+   -1.8,
+   112.8,
+   21.5,
+   42.9,
+   6.2,
+   68.9,
+   69.0,
+   155.9,
+   -17.3,
+   -10.4,
+   -51.4,
+   17.8,
+   -41.3,
+   -7.6,
+   11.5
+  ],
+  "hv_battery_degradation": [
+   -41.4,
+   -55.4,
+   61.4,
+   86.6,
+   50.1,
+   45.4,
+   4.1,
+   186.7,
+   64.1,
+   -22.0,
+   168.7,
+   25.4,
+   93.6,
+   -4.2,
+   -1.0,
+   107.8
+  ]
+ },
+ "persistence": [
+  {
+   "window": 10,
+   "ratio": 0.5,
+   "false_alarm_rate": 0.217,
+   "detected": 0.933,
+   "before_dtc": 0.642,
+   "used": false
+  },
+  {
+   "window": 20,
+   "ratio": 0.6,
+   "false_alarm_rate": 0.108,
+   "detected": 0.933,
+   "before_dtc": 0.558,
+   "used": false
+  },
+  {
+   "window": 30,
+   "ratio": 0.7,
+   "false_alarm_rate": 0.075,
+   "detected": 0.9,
+   "before_dtc": 0.425,
+   "used": true
+  },
+  {
+   "window": 40,
+   "ratio": 0.8,
+   "false_alarm_rate": 0.058,
+   "detected": 0.867,
+   "before_dtc": 0.367,
+   "used": false
+  },
+  {
+   "window": 60,
+   "ratio": 0.8,
+   "false_alarm_rate": 0.033,
+   "detected": 0.808,
+   "before_dtc": 0.292,
+   "used": false
+  },
+  {
+   "window": 90,
+   "ratio": 0.9,
+   "false_alarm_rate": 0.033,
+   "detected": 0.7,
+   "before_dtc": 0.192,
+   "used": false
+  }
+ ],
+ "diagnosis": {
+  "root_cause_accuracy": 0.873,
+  "faulty_with_anomaly": 102,
+  "normal_good_rate": 0.983,
+  "normal_mean_score": 99.233,
+  "faulty_flagged_rate": 1.0,
+  "faulty_mean_score": 67.925
+ }
+}
