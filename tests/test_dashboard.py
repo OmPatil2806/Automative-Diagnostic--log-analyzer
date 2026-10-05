@@ -144,3 +144,25 @@ def test_fleet_upload_waits_for_files():
     at = _open_fleet()
     at.segmented_control(key="fleet_source").set_value("Upload CSV files").run()
     assert at.button(key="fleet_run").disabled
+
+
+def test_overview_empty_state_then_samples():
+    at = AppTest.from_file(APP, default_timeout=180).run()
+    assert not at.exception
+    assert at.button(key="overview_load")
+    at.button(key="overview_load").click().run()
+    assert not at.exception
+    labels = [m.label for m in at.metric]
+    assert labels == ["Trips", "Vehicles", "Average score", "Need attention", "Early warnings"]
+    assert at.metric[0].value == "7" and at.metric[3].value == "6"
+    assert len(at.get("plotly_chart")) == 3
+    assert len(at.dataframe[0].value) == 7
+
+
+def test_overview_clear_session():
+    at = AppTest.from_file(APP, default_timeout=180).run()
+    at.button(key="overview_load").click().run()
+    at.button(key="overview_clear").click().run()
+    assert not at.exception
+    assert at.session_state["diagnosed_trips"] == {}
+    assert at.button(key="overview_load")

@@ -135,3 +135,68 @@ def detector_scores_figure(logs: pd.DataFrame, scored: pd.DataFrame, report: dic
     ))
     _style_axes(fig)
     return fig
+
+
+# --- overview charts (many trips) -----------------------------------------
+
+def _status_meta():
+    from dashboard.theme import STATUS
+    return STATUS
+
+
+def status_figure(summary: pd.DataFrame) -> go.Figure:
+    """How many trips are in each health status (status color + text label on every bar)."""
+    status = _status_meta()
+    counts = summary["status"].value_counts()
+    labels = [status[s]["label"] for s in status]
+    values = [int(counts.get(s, 0)) for s in status]
+    fig = go.Figure(go.Bar(
+        x=values, y=labels, orientation="h", marker=dict(color=[status[s]["color"] for s in status]),
+        text=[f"{v}" for v in values], textposition="outside", cliponaxis=False,
+        hovertemplate="%{y}: %{x} trip(s)<extra></extra>",
+    ))
+    fig.update_layout(**plotly_layout(height=220, hovermode="closest", margin=dict(l=10, r=30, t=10, b=30)))
+    fig.update_yaxes(autorange="reversed", showgrid=False, automargin=True)
+    fig.update_xaxes(gridcolor=GRID, zeroline=False, dtick=1, rangemode="tozero")
+    return fig
+
+
+def health_scores_figure(summary: pd.DataFrame) -> go.Figure:
+    """Health score per trip, colored by status, with the 50 and 80 status thresholds."""
+    status = _status_meta()
+    ordered = summary.sort_values("health_score", ascending=True)
+    fig = go.Figure()
+    for key, meta in status.items():
+        rows = ordered[ordered["status"] == key]
+        if len(rows):
+            fig.add_trace(go.Bar(
+                x=rows["health_score"], y=rows["trip"], orientation="h", name=meta["label"],
+                marker=dict(color=meta["color"]), text=rows["health_score"], textposition="inside",
+                insidetextanchor="end", textfont=dict(color=TEXT), cliponaxis=False,
+                hovertemplate="%{y}: %{x}/100<extra>" + meta["label"] + "</extra>",
+            ))
+    for threshold in (50, 80):
+        fig.add_vline(x=threshold, line=dict(color=TEXT_2, width=1, dash="dash"), layer="below")
+    fig.update_layout(**plotly_layout(
+        height=max(220, 34 * len(ordered) + 80), hovermode="closest", showlegend=True, barmode="overlay",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+        margin=dict(l=10, r=30, t=30, b=30),
+    ))
+    fig.update_yaxes(categoryorder="array", categoryarray=list(ordered["trip"]), showgrid=False, automargin=True)
+    fig.update_xaxes(range=[0, 100], gridcolor=GRID, zeroline=False, title_text="health score")
+    return fig
+
+
+def causes_figure(summary: pd.DataFrame) -> go.Figure:
+    """How often each likely cause was found."""
+    counts = summary.loc[summary["likely_cause"] != "", "likely_cause"].value_counts().sort_values()
+    fig = go.Figure(go.Bar(
+        x=counts.values, y=[c.split(" (")[0] for c in counts.index], orientation="h",
+        marker=dict(color=BLUE), text=counts.values, textposition="outside", cliponaxis=False,
+        customdata=counts.index, hovertemplate="%{customdata}: %{x} trip(s)<extra></extra>",
+    ))
+    fig.update_layout(**plotly_layout(height=max(180, 32 * len(counts) + 60), hovermode="closest",
+                                      margin=dict(l=10, r=30, t=10, b=30)))
+    fig.update_yaxes(showgrid=False, automargin=True)
+    fig.update_xaxes(gridcolor=GRID, zeroline=False, dtick=1, rangemode="tozero")
+    return fig

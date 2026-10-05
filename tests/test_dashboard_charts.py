@@ -49,3 +49,28 @@ def test_trip_overview_shading_starts_at_trip_time(result):
     fig = charts.trip_overview(shifted, scored, result.report)
     # time axis is relative to the trip start, so it still begins at 0 when the log does not
     assert min(fig.data[0].x) == 0
+
+
+@pytest.fixture(scope="module")
+def summary():
+    from dashboard.services.diagnosis_service import diagnose_all_samples
+    from dashboard.services.export_service import fleet_summary
+    return fleet_summary(diagnose_all_samples())
+
+
+def test_status_figure_counts(summary):
+    fig = charts.status_figure(summary)
+    assert list(fig.data[0].y) == ["Good", "Needs attention", "Critical"]
+    assert list(fig.data[0].x) == [1, 5, 1]
+
+
+def test_health_scores_figure(summary):
+    fig = charts.health_scores_figure(summary)
+    assert {t.name for t in fig.data} == {"Good", "Needs attention", "Critical"}
+    assert sum(len(t.x) for t in fig.data) == 7
+    assert sorted(s.x0 for s in fig.layout.shapes) == [50, 80]
+
+
+def test_causes_figure(summary):
+    fig = charts.causes_figure(summary)
+    assert sum(fig.data[0].x) == 6     # 6 faulty samples, each with one likely cause
